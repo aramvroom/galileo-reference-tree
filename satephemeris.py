@@ -5,7 +5,7 @@ import constants
 
 class SatEphemeris:
     def __init__(self):
-        self.gst = 0
+        self.gst = 0,
         self.prn = 0
         self.signalHealth = 0
         self.dataValidity = 0

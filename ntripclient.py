@@ -1,3 +1,19 @@
+"""
+Source: https://github.com/jcmb/NTRIP/
+This is heavily based on the NtripPerlClient program written by BKG.
+Then heavily based on a unavco original.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+"""
+
 import socket
 import sys
 import datetime
@@ -6,6 +22,7 @@ import time
 import ssl
 from pyrtcm import RTCMReader
 import constants
+
 
 class NtripClient(object):
     def __init__(self,
@@ -48,6 +65,10 @@ class NtripClient(object):
         self.socket = None
         self.flagE = None
         self.flagN = None
+        self.lonDeg = None
+        self.latDeg = None
+        self.lonMin = None
+        self.latMin = None
 
         self.ephemeris = ephem
         self.azelev = azelev
@@ -145,8 +166,6 @@ class NtripClient(object):
         for char in stringToCheck:
             xsum_calc = xsum_calc ^ ord(char)
         return "%02X" % xsum_calc
-
-
 
     def readData(self):
         reconnectTry = 1

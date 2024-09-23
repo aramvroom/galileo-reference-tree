@@ -2,8 +2,6 @@ from math import pi
 import datetime
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
-import time
-
 
 class SkyPlot:
     def __init__(self, max_sats):
