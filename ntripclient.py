@@ -14,13 +14,15 @@ Then heavily based on a unavco original.
     GNU General Public License for more details.
 """
 
-import socket
-import sys
-import datetime
 import base64
-import time
+import datetime
+import socket
 import ssl
+import sys
+import time
+
 from pyrtcm import RTCMReader
+
 import constants
 
 

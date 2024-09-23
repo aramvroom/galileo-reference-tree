@@ -1,17 +1,17 @@
 # !/usr/bin/env -S python3 -u
 
-import threading
-import sys
 import datetime
-import time
 import os
+import sys
+import threading
+import time
+
 from astropy.time import Time
 
 import constants
 import ntripclient as ntrip
 from satephemeris import SatEphemeris
 from skyplot import SkyPlot
-
 from transform import geodetic2aer
 
 
@@ -22,7 +22,7 @@ def propagate_all(all_ephem, all_azelev, verbose=False):
         for idx in range(constants.MAX_SATS):
             eph = all_ephem[idx]
 
-            # If it as a Time of Ephemeris, it can be propagated
+            # If it has a Time of Ephemeris, it can be propagated
             if eph.toe:
                 x, y, z = eph.propagate(getCurrentToW())
 

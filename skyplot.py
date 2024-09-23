@@ -1,7 +1,9 @@
-from math import pi
 import datetime
-from matplotlib.lines import Line2D
+from math import pi
+
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
 
 class SkyPlot:
     def __init__(self, max_sats):
@@ -39,6 +41,3 @@ class SkyPlot:
                 plt.pause(0.02)
 
             self.ax.set_title('Latest update %s' % datetime.datetime.utcnow().strftime('%Y/%m/%d - %H:%M:%S'))
-
-
-
