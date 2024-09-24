@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 
-class SkyPlot:
+class SkyPlot(object):
     def __init__(self, max_sats):
         self.max_sats = max_sats
         self.annot = [[] for _ in range(max_sats)]

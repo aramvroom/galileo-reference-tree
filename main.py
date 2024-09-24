@@ -26,7 +26,7 @@ def propagate_all(all_ephem, all_azelev, verbose=False):
             if eph.toe:
                 x, y, z = eph.propagate(getCurrentToW())
 
-                # Convert to azumuth, elevation and range
+                # Convert to azimuth, elevation and range
                 az, elev, r = geodetic2aer(x, y, z, constants.OWN_LAT_DEG, constants.OWN_LON_DEG,
                                            constants.OWN_ALT_M)
                 all_azelev[idx] = [az, elev]
@@ -44,10 +44,10 @@ def getCurrentToW():
 
 def getNtripArgs(output_file="", header_file=False):
     args = {'lat': constants.OWN_LAT_DEG, 'lon': constants.OWN_LON_DEG, 'height': constants.OWN_ALT_M,
-                 'host': constants.INCLUDE_HOST_HEADER, 'ssl': constants.USE_SSL,
-                 'caster': constants.CASTER_URL, 'port': constants.CASTER_PORT, 'mountpoint': constants.MOUNTPOINT,
-                 'V2': constants.USE_NTRIP_V2, 'verbose': constants.VERBOSE,
-                 'headerOutput': constants.WRITE_HEADER}
+            'host': constants.INCLUDE_HOST_HEADER, 'ssl': constants.USE_SSL,
+            'caster': constants.CASTER_URL, 'port': constants.CASTER_PORT, 'mountpoint': constants.MOUNTPOINT,
+            'V2': constants.USE_NTRIP_V2, 'verbose': constants.VERBOSE,
+            'headerOutput': constants.WRITE_HEADER}
     if output_file:
         file = open(output_file, 'wb')
         args['out'] = file

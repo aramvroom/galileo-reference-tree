@@ -67,10 +67,6 @@ class NtripClient(object):
         self.socket = None
         self.flagE = None
         self.flagN = None
-        self.lonDeg = None
-        self.latDeg = None
-        self.lonMin = None
-        self.latMin = None
 
         self.ephemeris = ephem
         self.azelev = azelev
