@@ -10,6 +10,8 @@ from astropy.time import Time
 
 import constants
 import ntripclient as ntrip
+import ledcontroller as led
+from plotleds import LedPlot
 from satephemeris import SatEphemeris
 from skyplot import SkyPlot
 from transform import geodetic2aer
@@ -89,8 +91,13 @@ if __name__ == '__main__':
 
         # Start plotting loop. This has to be done in the main thread
         skyplot = SkyPlot(constants.MAX_SATS)
+        ledController = led.LedController(constants.MAX_SATS, ephemeris, azelev)
+        ledPlot = LedPlot(10, ledController.ledstrip)
+
         while True:
             skyplot.update_plot(ephemeris, azelev)
+            ledController.update_leds()
+            ledPlot.update_plot()
             time.sleep(constants.PLOTTING_INTERVAL)
 
     finally:

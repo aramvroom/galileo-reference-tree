@@ -9,10 +9,10 @@ import time
 
 
 class LedPlot(object):
-    def __init__(self, numleds, width, strip):
-        self.numleds = numleds
+    def __init__(self, width, strip):
         self.width = width
         self.strip = strip
+        self.numleds = strip.numPixels()
         self.height = self.numleds / self.width
         self.annot = [[] for _ in range(self.numleds)]
         self.leds_plot = [[] for _ in range(self.numleds)]
@@ -20,7 +20,7 @@ class LedPlot(object):
 
         plt.ion()
         self.ax.set_xlim([-1, self.width])
-        self.ax.set_ylim([-1, self.height])
+        self.ax.set_ylim([0, (self.height + 1)*1.05])
         self.ax.set_facecolor("black")
         self.ax.set_yticklabels([])
         self.ax.set_xticklabels([])
@@ -31,9 +31,9 @@ class LedPlot(object):
         for ledIdx in range(self.numleds):
             self.leds_plot[ledIdx] = plt.plot([], [], '.', markersize=20)
             Line2D.set_xdata(self.leds_plot[ledIdx][0], [ledIdx % self.width])
-            Line2D.set_ydata(self.leds_plot[ledIdx][0], [floor(ledIdx / self.width)])
+            Line2D.set_ydata(self.leds_plot[ledIdx][0], [self.height - floor(ledIdx / self.width)])
             self.annot[ledIdx] = self.ax.annotate('%s' % (ledIdx + 1),
-                                                  xy=[ledIdx % self.width, floor(ledIdx / self.width) - 0.7],
+                                                  xy=[ledIdx % self.width, self.height - floor(ledIdx / self.width) + 0.1],
                                                   textcoords='data', color=(1, 1, 1))
 
     def update_plot(self):
