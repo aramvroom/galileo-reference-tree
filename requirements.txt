@@ -1,4 +1,5 @@
 astropy==6.0.1
 matplotlib==3.9.2
 pyrtcm==1.1.1
-rpi_ws281x_mock==0.2.2
+rpi_ws281x_mock==0.2.2; sys_platform!="linux"
+rpi_ws281x==1.1.3; sys_platform=="linux"

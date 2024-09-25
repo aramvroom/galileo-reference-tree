@@ -89,17 +89,25 @@ if __name__ == '__main__':
         p2.setDaemon(True)
         p2.start()
 
+        # Start LED update loop
+        ledController = led.LedController(constants.MAX_SATS, ephemeris, azelev)
+        p3 = threading.Thread(target=ledController.update_leds)
+        p3.start()
+
+        # Start LED update loop
+      #  p4 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_A])
+     #   p4.start()
+
         # Start plotting loop. This has to be done in the main thread
         skyplot = SkyPlot(constants.MAX_SATS)
-        ledController = led.LedController(constants.MAX_SATS, ephemeris, azelev)
         ledPlot = LedPlot(10, ledController.ledstrip)
-
         while True:
             skyplot.update_plot(ephemeris, azelev)
-            ledController.update_leds()
             ledPlot.update_plot()
             time.sleep(constants.PLOTTING_INTERVAL)
 
     finally:
         p1.join()
         p2.join()
+        p3.join()
+  #      p4.join()
