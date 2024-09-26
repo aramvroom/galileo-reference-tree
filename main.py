@@ -95,8 +95,12 @@ if __name__ == '__main__':
         p3.start()
 
         # Start LED update loop
-      #  p4 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_A])
-     #   p4.start()
+        p4 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_A])
+        p5 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_B])
+        p6 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_C])
+        p4.start()
+        p5.start()
+        p6.start()
 
         # Start plotting loop. This has to be done in the main thread
         skyplot = SkyPlot(constants.MAX_SATS)
@@ -110,4 +114,6 @@ if __name__ == '__main__':
         p1.join()
         p2.join()
         p3.join()
-  #      p4.join()
+        p4.join()
+        p5.join()
+        p6.join()

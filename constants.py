@@ -6,8 +6,8 @@ SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed atte
 MAX_RECONNECTS = 1
 MAX_RECONNECT_TIMEOUT = 1200
 NTRIP_INTERVAL = 1  # So the first one is 1 second
-PROPAGATION_INTERVAL = 0.2
-PLOTTING_INTERVAL = 0.1
+PROPAGATION_INTERVAL = 2
+PLOTTING_INTERVAL = 0.5
 
 # Natural & WGS84 Constants
 MU_EARTH = 3.986004418e14
@@ -37,7 +37,7 @@ VERBOSE = False  # Connect in verbose mode
 WRITE_HEADER = False  # Write header to stderr
 
 # General LED strip configuration:
-LED_COUNT = 60  # Number of LED pixels.
+LED_COUNT = 100  # Number of LED pixels.
 LED_PIN = 18  # GPIO pin connected to the pixels (18 uses PWM!).
 # LED_PIN = 10        # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -56,6 +56,6 @@ MIN_ELEV_BRIGHTNESS = 127
 MAX_ELEV_VALUE = 90
 MAX_ELEV_BRIGHTNESS = 255
 
-ORBITAL_PLANE_A = range(71, 80)
-ORBITAL_PLANE_B = range(81, 90)
-ORBITAL_PLANE_C = range(91, 100)
+ORBITAL_PLANE_A = [*range(71, 80 + 1)]
+ORBITAL_PLANE_B = [*range(81, 90 + 1)]
+ORBITAL_PLANE_C = [*range(91, 100 + 1)]

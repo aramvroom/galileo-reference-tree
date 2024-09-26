@@ -2,6 +2,11 @@ import time
 
 from rpi_ws281x import PixelStrip, Color
 import constants
+from itertools import cycle
+
+
+def rotate_list(l, n):
+    return l[n:] + l[:n]
 
 
 class LedController(object):
@@ -47,44 +52,19 @@ class LedController(object):
         early_late_color = Color(127, 127, 127)
         reset_color = Color(0, 0, 0)
 
-        min_idx = min(led_indices)
-        max_idx = max(led_indices)
-        num_in_range = max_idx - min_idx
-        while True:
-            for mid_idx, mid_led in enumerate(led_indices):
-                self.ledstrip.setPixelColor(mid_led, mid_color)
+        very_early_cycle_plane = cycle(led_indices)
+        early_cycle_plane = cycle(rotate_list(led_indices, 1))
+        prompt_cycle_plane = cycle(rotate_list(led_indices, 2))
+        late_cycle_plane = cycle(rotate_list(led_indices, 3))
+        very_late_cycle_plane = cycle(rotate_list(led_indices, 4))
 
-                reset_led_idx = mid_led + 2
-                if reset_led_idx >= max_idx:
-                    reset_led_idx -= num_in_range
-                self.ledstrip.setPixelColor(reset_led_idx, reset_color)
-
-                reset_led_idx = mid_led - 2
-                if reset_led_idx < min_idx:
-                    reset_led_idx += num_in_range
-                self.ledstrip.setPixelColor(reset_led_idx, reset_color)
-
-                early_led_idx = mid_led + 1
-                if early_led_idx > max_idx:
-                    early_led_idx -= num_in_range
-                self.ledstrip.setPixelColor(early_led_idx, early_late_color)
-
-                late_led_idx = mid_led - 1
-                if late_led_idx < min_idx:
-                    late_led_idx += num_in_range
-                self.ledstrip.setPixelColor(late_led_idx, early_late_color)
-                time.sleep(1)
-
-    def theaterChase(self, color, wait_ms=50, iterations=10):
-        """Movie theater light style chaser animation."""
-        for j in range(iterations):
-            for q in range(3):
-                for i in range(0, self.ledstrip.numPixels(), 3):
-                    self.ledstrip.setPixelColor(i + q, color)
-                self.ledstrip.show()
-                time.sleep(wait_ms / 1000.0)
-                for i in range(0, self.ledstrip.numPixels(), 3):
-                    self.ledstrip.setPixelColor(i + q, 0)
+        for prompt_led in prompt_cycle_plane:
+            self.ledstrip.setPixelColor(next(very_early_cycle_plane) - 1, reset_color)
+            self.ledstrip.setPixelColor(next(early_cycle_plane) - 1, early_late_color)
+            self.ledstrip.setPixelColor(prompt_led - 1, mid_color)
+            self.ledstrip.setPixelColor(next(late_cycle_plane) - 1, early_late_color)
+            self.ledstrip.setPixelColor(next(very_late_cycle_plane) - 1, reset_color)
+            time.sleep(1)
 
     def update_leds(self):
         while True:
