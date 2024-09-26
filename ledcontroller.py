@@ -1,6 +1,6 @@
 import time
 
-from rpi_ws281x import PixelStrip, Color
+from rpi_ws281x import PixelStrip, Color, ws
 import constants
 from itertools import cycle
 
@@ -14,7 +14,7 @@ class LedController(object):
         strip = PixelStrip(constants.LED_COUNT, constants.LED_PIN,
                            constants.LED_FREQ_HZ, constants.LED_DMA,
                            constants.LED_INVERT, constants.LED_MAX_BRIGHTNESS,
-                           constants.LED_CHANNEL)
+                           constants.LED_CHANNEL, constants.LED_STRIP_TYPE)
         strip.begin()
         self.ledstrip = strip
         self.max_sats = max_sats

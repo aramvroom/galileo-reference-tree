@@ -1,13 +1,15 @@
 from math import pi
 
+from rpi_ws281x import ws
+
 CLIENT_VERSION = 0.3
 USER_AGENT = "NTRIP JCMBsoftPythonClient/%.1f" % CLIENT_VERSION
 SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed attempt
 MAX_RECONNECTS = 1
 MAX_RECONNECT_TIMEOUT = 1200
 NTRIP_INTERVAL = 1  # So the first one is 1 second
-PROPAGATION_INTERVAL = 2
-PLOTTING_INTERVAL = 0.5
+PROPAGATION_INTERVAL = 20
+PLOTTING_INTERVAL = 0.1
 
 # Natural & WGS84 Constants
 MU_EARTH = 3.986004418e14
@@ -45,6 +47,7 @@ LED_DMA = 10  # DMA channel to use for generating signal (try 10)
 LED_MAX_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
 LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
+LED_STRIP_TYPE = ws.WS2811_STRIP_RGB
 LED_UPDATE_INTERVAL = 1
 
 # Satellite LED strip configuration
