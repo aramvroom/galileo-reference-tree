@@ -47,7 +47,7 @@ class LedPlot(object):
             alpha = 1
             if max_color:
                 led_brightness = max_color
-                red = red / max_color           # Always make the brightest color 1 and simulate brightness through alpha
+                red = red / max_color       # Always make the brightest color 1 and plot the brightness through alpha
                 green = green / max_color
                 blue = blue / max_color
                 alpha = led_brightness * self.strip.getBrightness() / 255
@@ -60,12 +60,12 @@ class LedPlot(object):
 ## FUNCTIONS TO REMOVE
 
 # Define functions which animate LEDs in various ways.
-def colorWipe(ledPlot, strip, color, wait_ms=100):
+def colorWipe(led_plot, strip, color, wait_ms=100):
     """Wipe color across display a pixel at a time."""
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, color)
         strip.show()
-        ledPlot.update_plot()
+        led_plot.update_plot()
 
         time.sleep(wait_ms / 1000.0)
 

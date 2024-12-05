@@ -2,8 +2,6 @@ from math import pi
 
 from rpi_ws281x import ws
 
-CLIENT_VERSION = 0.3
-USER_AGENT = "NTRIP JCMBsoftPythonClient/%.1f" % CLIENT_VERSION
 SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed attempt
 MAX_RECONNECTS = 1
 MAX_RECONNECT_TIMEOUT = 1200
@@ -29,7 +27,10 @@ OWN_ALT_M = 0
 MAX_SATS = 36
 
 # Caster settings
+SOFTWARE_VERSION = 0.3
+SOFTWARE_NAME = "NTRIP gnss-monitor/%.1f" % SOFTWARE_VERSION
 INCLUDE_HOST_HEADER = False  # Include host header, should be on for IBSS
+USER_NAME = "Aram"
 USE_SSL = False  # Use SSL for the connection
 CASTER_URL = "ntrip.kadaster.nl"  # URL of the caster
 CASTER_PORT = 2101  # Port of the caster

@@ -99,8 +99,8 @@ class NtripClient(object):
         self.latMin = (lat - self.latDeg) * 60
 
     def getMountPointBytes(self):
-        mountPointString = "GET %s HTTP/1.1\r\nUser-Agent: %s\r\nAuthorization: Basic %s\r\n" % (
-            self.mountpoint, constants.USER_AGENT, self.user)
+        mountPointString = "GET /%s HTTP/1.1\r\nUser-Agent: %s\r\nAuthorization: Basic %s\r\n" % (
+            self.mountpoint, constants.SOFTWARE_NAME, self.user)
         if self.host or self.V2:
             hostString = "Host: %s:%i\r\n" % (self.caster, self.port)
             mountPointString += hostString
@@ -210,7 +210,7 @@ class NtripClient(object):
                         satID = parsed_data.DF252
                         gst = parsed_data.DF289 * constants.SEC_IN_WEEK + parsed_data.DF293
                         if gst > self.ephemeris[satID - 1].gst:
-                            self.ephemeris[satID - 1].readRTCM(parsed_data)
+                            self.ephemeris[satID - 1].map_to_ephemeris(parsed_data)
 
         except socket.timeout:
             if self.verbose:

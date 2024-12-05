@@ -11,6 +11,7 @@ from astropy.time import Time
 import constants
 import ntripclient as ntrip
 import ledcontroller as led
+from ntripclient_new import NtripClientNew
 from plotleds import LedPlot
 from satephemeris import SatEphemeris
 from skyplot import SkyPlot
@@ -77,10 +78,17 @@ if __name__ == '__main__':
         ephemeris.append(SatEphemeris())
     azelev = [[] for _ in range(constants.MAX_SATS)]
 
+
     try:
+
         # Start RTCM retrieval loop
-        client = ntrip.NtripClient(ephemeris, azelev, **ntripArgs)
-        p1 = threading.Thread(target=client.readData)
+
+        tmp = NtripClientNew(ephemeris, azelev)
+        #tmp.get_ephemeris_loop()
+        p1 = threading.Thread(target=tmp.get_ephemeris_loop)
+
+   #     client = ntrip.NtripClient(ephemeris, azelev, **ntripArgs)
+    #    p1 = threading.Thread(target=client.readData)
         p1.setDaemon(True)
         p1.start()
 

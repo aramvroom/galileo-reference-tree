@@ -32,7 +32,7 @@ class SatEphemeris(object):
         self.omega = 0
         self.OmegaDot = 0
 
-    def readRTCM(self, rtcm):
+    def map_to_ephemeris(self, rtcm):
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
         self.prn = rtcm.DF252
         self.signalHealth = rtcm.DF287
