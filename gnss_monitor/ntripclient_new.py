@@ -1,10 +1,11 @@
 import base64
+import socket
 import sys
 
 from pyrtcm import RTCMReader
-import constants
-import socket
-import ssl
+
+from gnss_monitor import constants
+from gnss_monitor.config import Ntrip
 
 
 def check_connection_response(line):
@@ -24,30 +25,30 @@ def check_connection_response(line):
 
 
 class NtripClientNew(object):
-    def __init__(self,
-                 ephem,
-                 azelev):
+    def __init__(self, ephem, azelev, ntrip_config: Ntrip):
         self.ephem = ephem
         self.azelev = azelev
+        self.config = ntrip_config
         self.socket = None
 
         self.ssl = True
         self.connect_to_server()
 
     def get_mount_point_request(self):
-        user_name_base64 = base64.b64encode(bytes(constants.USER_NAME, 'utf-8')).decode("utf-8")
+        user_name_base64 = base64.b64encode(bytes(self.config.username_password, 'utf-8')).decode("utf-8")
+        client_name = "NTRIP {0}/{1}".format(self.config.software_name, self.config.software_version)
         mount_point_request = "GET /{0} HTTP/1.1\r\nUser-Agent: {1}\r\nAuthorization: Basic {2}\r\n".format(
-            constants.MOUNTPOINT, constants.SOFTWARE_NAME, user_name_base64)
-        if constants.INCLUDE_HOST_HEADER | constants.USE_NTRIP_V2:
-            mount_point_request += "Host: %s:%s\r\n" % (constants.CASTER_URL, constants.CASTER_PORT)
-        if constants.USE_NTRIP_V2:
+            self.config.mountpoint, client_name, user_name_base64)
+        if self.config.include_host_header | self.config.ntrip_v2:
+            mount_point_request += "Host: %s:%s\r\n" % (self.config.address, self.config.port)
+        if self.config.ntrip_v2:
             mount_point_request += "Ntrip-Version: Ntrip/2.0\r\n"
         mount_point_request += "\r\n"
         return bytes(mount_point_request, 'ascii')
 
     def connect_to_server(self):
         # Set up a connection with the mount point
-        self.socket = socket.create_connection((constants.CASTER_URL, constants.CASTER_PORT))
+        self.socket = socket.create_connection((self.config.address, self.config.port))
 
         # TODO: Add and test SSL here
         # if self.ssl:

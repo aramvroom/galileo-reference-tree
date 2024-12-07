@@ -1,8 +1,9 @@
 import time
-
-from rpi_ws281x import PixelStrip, Color, ws
-import constants
 from itertools import cycle
+
+from rpi_ws281x import PixelStrip, Color
+
+from gnss_monitor.config import LEDs
 
 
 def rotate_list(l, n):
@@ -10,16 +11,17 @@ def rotate_list(l, n):
 
 
 class LedController(object):
-    def __init__(self, max_sats, ephemeris, azelev):
-        strip = PixelStrip(constants.LED_COUNT, constants.LED_PIN,
-                           constants.LED_FREQ_HZ, constants.LED_DMA,
-                           constants.LED_INVERT, constants.LED_MAX_BRIGHTNESS,
-                           constants.LED_CHANNEL, constants.LED_STRIP_TYPE)
+    def __init__(self, max_sats, ephemeris, azelev, led_config: LEDs):
+        strip = PixelStrip(led_config.general.led_count, led_config.general.gpio_pin,
+                           led_config.general.led_freq_hz, led_config.general.dma_channel,
+                           led_config.general.invert_signal, led_config.general.led_max_brightness,
+                           led_config.general.channel, led_config.general.led_strip_type)
         strip.begin()
         self.ledstrip = strip
         self.max_sats = max_sats
         self.ephemeris = ephemeris
         self.azelev = azelev
+        self.config = led_config
 
     def get_led_idx(self, sat_idx):
         return sat_idx
@@ -27,9 +29,9 @@ class LedController(object):
     def get_brightness(self, sat_idx):
         elev = self.azelev[sat_idx][1]
 
-        a = (constants.MAX_ELEV_BRIGHTNESS - constants.MIN_ELEV_BRIGHTNESS) / \
-            (constants.MAX_ELEV_VALUE - constants.MIN_ELEV_VALUE)
-        b = constants.MIN_ELEV_BRIGHTNESS
+        a = (self.config.satellites.max_elev_brightness -  self.config.satellites.min_elev_brightness) / \
+            (self.config.satellites.max_elev - self.config.satellites.min_elev)
+        b = self.config.satellites.min_elev_brightness
 
         brightness = a * elev + b
         if brightness < 0:
@@ -38,13 +40,13 @@ class LedController(object):
 
     def set_sat_led(self, sat_idx, signal_health):
         if not signal_health:
-            ledColor = constants.COLOR_HEALTHY
+            led_color = self.config.satellites.color_healthy
         else:
-            ledColor = constants.COLOR_UNHEALTHY
+            led_color = self.config.satellites.color_unhealthy
 
-        brightness = self.get_brightness(sat_idx) / constants.LED_MAX_BRIGHTNESS
-        ledColorWithElev = [round(i * brightness) for i in ledColor]
-        color = Color(*ledColorWithElev)
+        brightness = self.get_brightness(sat_idx) / self.config.general.led_max_brightness
+        led_color_with_elev = [round(i * brightness) for i in led_color]
+        color = Color(*led_color_with_elev)
         self.ledstrip.setPixelColor(self.get_led_idx(sat_idx), color)
 
     def show_plane(self, led_indices):
@@ -72,4 +74,4 @@ class LedController(object):
                 if len(self.azelev[satIdx]) and self.azelev[satIdx][1] >= 0:
                     self.set_sat_led(satIdx, self.ephemeris[satIdx].signalHealth)
             self.ledstrip.show()
-            time.sleep(constants.LED_UPDATE_INTERVAL)
+            time.sleep(self.config.general.update_interval)

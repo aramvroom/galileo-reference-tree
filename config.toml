@@ -1,0 +1,47 @@
+# Run verbosely
+verbose = false
+
+# The location to compute the visibilities for
+[location]
+latitude-deg = 52.0
+longitude-deg = 4.0
+altitude-m = 0.0
+
+# Settings related to the NTRIP Client and Caster
+[ntrip]
+software-version = 0.3                  # Version of this software to identify with
+software-name = "gnss-monitor"          # Name of this software to identify with
+address = "ntrip.kadaster.nl"           # URL of the caster
+port = 2101                             # Port of the caster
+mountpoint = "BCEP00KAD0"               # Mount point to use
+use-ssl = false                         # Use SSL for the connection
+ntrip-v2 = false                        # Make a NTRIP V2 Connection
+include-host-header = false             # Include host header, should be on for IBSS
+username-password = "anonymous:pass"    # The username and password to connect with
+
+# Settings related to the LED strip
+[leds]
+
+# General settings related to the LED strip
+[leds.general]
+led-count = 100             # Number of LED pixels.
+gpio-pin = 18               # GPIO pin connected to the pixels (18 uses PWM, 10 uses SPI /dev/spidev0.0).
+led-freq-hz = 800e3         # LED signal frequency in hertz (usually 800khz)
+dma-channel = 10            # DMA channel to use for generating signal (try 10)
+led-max-brightness = 255    # Set to 0 for darkest and 255 for brightest
+invert-signal = false       # True to invert the signal (when using NPN transistor level shift)
+channel = 0                 # set to '1' for GPIOs 13, 19, 41, 45 or 53
+led-strip-type = "_rpi_ws281x.WS2811_STRIP_RGB" # The type of LED strip, see https://github.com/HarmvZ/rpi_ws281x_mock/blob/master/rpi_ws281x/rpi_ws281x_mock.py#L128
+update-interval = 1         # Update interval of the LEDs in seconds
+
+# Settings for the LEDs related to the satellites
+[leds.satellites]
+color-healthy = [0, 255, 0]                                 # [R,G,B] color to use for healthy satellites
+color-unhealthy = [255, 0, 0]                               # [R,G,B] color to use for unhealthy satellites
+min-elev = 0.0                                              # Minimum elevation
+min-elev-brightness = 127                                   # Brightness corresponding to the minimum elevation
+max-elev = 90.0                                             # Maximum elevation
+max-elev-brightness = 255                                   # Brightness corresponding to the maximum elevation
+orbit-plane-a = [71, 72, 73, 74, 75, 76, 77, 78, 79, 80]    # LED numbers corresponding to orbital plane A
+orbit-plane-b = [81, 82, 83, 84, 85, 86, 87, 88, 89, 90]    # LED numbers corresponding to orbital plane B
+orbit-plane-c = [91, 92, 93, 94, 95, 96, 97, 98, 99, 100]   # LED numbers corresponding to orbital plane C

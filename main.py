@@ -1,24 +1,23 @@
 # !/usr/bin/env -S python3 -u
 
 import datetime
-import os
-import sys
 import threading
 import time
 
 from astropy.time import Time
+from dataclass_binder import Binder
 
-import constants
-import ntripclient as ntrip
-import ledcontroller as led
-from ntripclient_new import NtripClientNew
-from plotleds import LedPlot
-from satephemeris import SatEphemeris
-from skyplot import SkyPlot
-from transform import geodetic2aer
+from gnss_monitor import constants
+from gnss_monitor.config import Config
+from gnss_monitor.ntripclient_new import NtripClientNew
+from gnss_monitor.plotleds import LedPlot
+from gnss_monitor.satephemeris import SatEphemeris
+from gnss_monitor.skyplot import SkyPlot
+from gnss_monitor.transform import geodetic2aer
+from gnss_monitor.ledcontroller import LedController
 
 
-def propagate_all(all_ephem, all_azelev, verbose=False):
+def propagate_all(all_ephem, all_azelev, location, verbose=False):
     # Start continuous loop
     while True:
         # Loop over all the ephemeris
@@ -30,8 +29,8 @@ def propagate_all(all_ephem, all_azelev, verbose=False):
                 x, y, z = eph.propagate(getCurrentToW())
 
                 # Convert to azimuth, elevation and range
-                az, elev, r = geodetic2aer(x, y, z, constants.OWN_LAT_DEG, constants.OWN_LON_DEG,
-                                           constants.OWN_ALT_M)
+                az, elev, r = geodetic2aer(x, y, z, location.latitude_deg, location.longitude_deg,
+                                           location.altitude_m)
                 all_azelev[idx] = [az, elev]
                 if verbose:
                     print('Sat', eph.prn, 'az', az, 'elev', elev, 'r', r)
@@ -39,38 +38,18 @@ def propagate_all(all_ephem, all_azelev, verbose=False):
 
 
 def getCurrentToW():
-    now = datetime.datetime.utcnow()
-    gpsTimeNow = Time(now, format='datetime').to_value('gps')
-    gpsTow = gpsTimeNow % constants.SEC_IN_WEEK
-    return gpsTow
-
-
-def getNtripArgs(output_file="", header_file=False):
-    args = {'lat': constants.OWN_LAT_DEG, 'lon': constants.OWN_LON_DEG, 'height': constants.OWN_ALT_M,
-            'host': constants.INCLUDE_HOST_HEADER, 'ssl': constants.USE_SSL,
-            'caster': constants.CASTER_URL, 'port': constants.CASTER_PORT, 'mountpoint': constants.MOUNTPOINT,
-            'V2': constants.USE_NTRIP_V2, 'verbose': constants.VERBOSE,
-            'headerOutput': constants.WRITE_HEADER}
-    if output_file:
-        file = open(output_file, 'wb')
-        args['out'] = file
-    else:
-        stdout = os.fdopen(sys.stdout.fileno(), "wb", closefd=False, buffering=0)
-        args['out'] = stdout
-
-    if header_file:
-        h = open(header_file, 'w')
-        args['headerFile'] = h
-        args['headerOutput'] = True
-    return args
+    now = datetime.datetime.now(datetime.UTC)
+    gps_time_now = Time(now, format='datetime').to_value('gps')
+    gps_tow = gps_time_now % constants.SEC_IN_WEEK
+    return gps_tow
 
 
 if __name__ == '__main__':
     outputFile = ''
     headerFile = False
 
-    # Create dictionary with options for the NTRIP client
-    ntripArgs = getNtripArgs(outputFile, headerFile)
+    # Read the configuration file
+    config = Binder(Config).parse_toml("./config.toml")
 
     # Create data structures for the ephemeris and azimuth + elevation
     ephemeris = []
@@ -78,34 +57,27 @@ if __name__ == '__main__':
         ephemeris.append(SatEphemeris())
     azelev = [[] for _ in range(constants.MAX_SATS)]
 
-
     try:
-
         # Start RTCM retrieval loop
-
-        tmp = NtripClientNew(ephemeris, azelev)
-        #tmp.get_ephemeris_loop()
+        tmp = NtripClientNew(ephemeris, azelev, config.ntrip)
         p1 = threading.Thread(target=tmp.get_ephemeris_loop)
-
-   #     client = ntrip.NtripClient(ephemeris, azelev, **ntripArgs)
-    #    p1 = threading.Thread(target=client.readData)
-        p1.setDaemon(True)
+        p1.daemon = True
         p1.start()
 
         # Start propagation loop
-        p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, constants.VERBOSE])
-        p2.setDaemon(True)
+        p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.verbose])
+        p2.daemon = True
         p2.start()
 
-        # Start LED update loop
-        ledController = led.LedController(constants.MAX_SATS, ephemeris, azelev)
+        # Start LED update loop for satellites
+        ledController = LedController(constants.MAX_SATS, ephemeris, azelev, config.leds)
         p3 = threading.Thread(target=ledController.update_leds)
         p3.start()
 
-        # Start LED update loop
-        p4 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_A])
-        p5 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_B])
-        p6 = threading.Thread(target=ledController.show_plane, args=[constants.ORBITAL_PLANE_C])
+        # Start LED update loop for orbital planes
+        p4 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a])
+        p5 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_b])
+        p6 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_c])
         p4.start()
         p5.start()
         p6.start()

@@ -1,6 +1,6 @@
 from math import sqrt, sin, cos, hypot, atan2, pi
 
-import constants
+from gnss_monitor import constants
 
 
 def lla2ecef(lat, lon, alt):

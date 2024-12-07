@@ -1,6 +1,6 @@
 import datetime
 from math import pi
-import time
+
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
@@ -39,4 +39,4 @@ class SkyPlot(object):
                 self.annot[satIdx].set_y(azelev[satIdx][1])
         plt.draw()
         plt.pause(0.02)
-        self.ax.set_title('Latest update %s' % datetime.datetime.utcnow().strftime('%Y/%m/%d - %H:%M:%S'))
+        self.ax.set_title('Latest update %s' % datetime.datetime.now(datetime.UTC).strftime('%Y/%m/%d - %H:%M:%S'))

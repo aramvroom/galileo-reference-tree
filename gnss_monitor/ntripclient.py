@@ -23,7 +23,7 @@ import time
 
 from pyrtcm import RTCMReader
 
-import constants
+from gnss_monitor import constants
 
 
 class NtripClient(object):
@@ -112,7 +112,7 @@ class NtripClient(object):
         return bytes(mountPointString, 'ascii')
 
     def getGGABytes(self):
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(datetime.UTC)
         ggaString = "GPGGA,%02d%02d%04.2f,%02d%011.8f,%1s,%03d%011.8f,%1s,1,05,0.19,+00400,M,%5.3f,M,," % \
                     (now.hour, now.minute, now.second, self.latDeg, self.latMin, self.flagN, self.lonDeg, self.lonMin,
                      self.flagE, self.height)
