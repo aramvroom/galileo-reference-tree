@@ -46,9 +46,7 @@ class TestLedController(unittest.TestCase):
 
     def test_get_brightness(self):
         # Prepare
-        n_sats = 1
-        n_vars = 2 # Azimuth and elevation
-        azelev =  [[0]*n_vars]*n_sats
+        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
         azelev[0][1] = 45
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
         expected_brightness = 191
@@ -63,9 +61,7 @@ class TestLedController(unittest.TestCase):
         # Prepare
         config = LEDs
         config.satellites.min_elev_brightness = 0
-        n_sats = 1
-        n_vars = 2 # Azimuth and elevation
-        azelev =  [[0]*n_vars]*n_sats
+        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
         azelev[0][1] = -45
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, config)
         expected_brightness = 0
@@ -75,6 +71,39 @@ class TestLedController(unittest.TestCase):
 
         # Verify
         self.assertEqual(found_brightness, expected_brightness)
+
+    def test_set_sat_led_healthy(self):
+        # Prepare
+        signal_unhealthy = False
+        sat_idx = 0
+        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev[sat_idx][1] = 90
+        ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
+        expected_color = LEDs.satellites.color_healthy
+
+        # Execute
+        ledcontroller.set_sat_led(sat_idx,signal_unhealthy)
+        found_color_rgb = ledcontroller.ledstrip.getPixelColorRGB(ledcontroller.get_led_idx(sat_idx))
+
+        # Verify
+        self.assertEqual((found_color_rgb.r, found_color_rgb.g, found_color_rgb.b), expected_color)
+
+    def test_set_sat_led_unhealthy(self):
+        # Prepare
+        signal_unhealthy = True
+        sat_idx = 0
+        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev[sat_idx][1] = 90
+        ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
+        expected_color = LEDs.satellites.color_unhealthy
+
+        # Execute
+        ledcontroller.set_sat_led(sat_idx,signal_unhealthy)
+        found_color_rgb = ledcontroller.ledstrip.getPixelColorRGB(ledcontroller.get_led_idx(sat_idx))
+
+        # Verify
+        self.assertEqual((found_color_rgb.r, found_color_rgb.g, found_color_rgb.b), expected_color)
+
 
 if __name__ == '__main__':
     unittest.main()
