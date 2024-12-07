@@ -37,9 +37,12 @@ def propagate_all(all_ephem, all_azelev, location, verbose=False):
         time.sleep(constants.PROPAGATION_INTERVAL)
 
 
+def get_utc_now():
+    return datetime.datetime.now(datetime.UTC)
+
 def getCurrentToW():
-    now = datetime.datetime.now(datetime.UTC)
-    gps_time_now = Time(now, format='datetime').to_value('gps')
+    current_time = get_utc_now()
+    gps_time_now = Time(current_time, format='datetime').to_value('gps')
     gps_tow = gps_time_now % constants.SEC_IN_WEEK
     return gps_tow
 

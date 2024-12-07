@@ -9,10 +9,10 @@ def lla2ecef(lat, lon, alt):
     lat *= constants.DEG_TO_RAD
     lon *= constants.DEG_TO_RAD
 
-    N = constants.WGS84_SEMI_MAJOR_AXIS / sqrt(1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED * sin(lat) * sin(lat))
-    x = (N + alt) * cos(lat) * cos(lon)
-    y = (N + alt) * cos(lat) * sin(lon)
-    z = ((1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED) * N + alt) * sin(lat)
+    n = constants.WGS84_SEMI_MAJOR_AXIS / sqrt(1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED * sin(lat) * sin(lat))
+    x = (n + alt) * cos(lat) * cos(lon)
+    y = (n + alt) * cos(lat) * sin(lon)
+    z = ((1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED) * n + alt) * sin(lat)
     return x, y, z
 
 
@@ -21,16 +21,17 @@ def geodetic2aer(x, y, z, lat0, lon0, alt0):
     e, n, u = ecef2enu(x - x0, y - y0, z - z0, lat0, lon0)
 
     r = hypot(e, n)
-    slantRange = hypot(r, u)
+    slant_range = hypot(r, u)
     elev = atan2(u, r) * constants.RAD_TO_DEG
     az = atan2(e, n) % (2 * pi) * constants.RAD_TO_DEG
 
-    return az, elev, slantRange
+    return az, elev, slant_range
 
 
 def ecef2enu(u, v, w, lat0, lon0):
-    lat0 = constants.DEG_TO_RAD * lat0
-    lon0 = constants.DEG_TO_RAD * lon0
+
+    lat0 *= constants.DEG_TO_RAD
+    lon0 *= constants.DEG_TO_RAD
 
     t = cos(lon0) * u + sin(lon0) * v
     east = -sin(lon0) * u + cos(lon0) * v
