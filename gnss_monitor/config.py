@@ -42,6 +42,8 @@ class GeneralLEDSettings:
 class SatellitesLEDSettings:
     color_healthy: List[int]    = (0, 255, 0)               # [R,G,B] color to use for healthy satellites
     color_unhealthy: List[int]  = (255, 0, 0)               # [R,G,B] color to use for unhealthy satellites
+    color_plane: List[int]      = (255, 255, 255)           # [R,G,B] color to use to display the orbital plane
+    brightness_early_late_plane: float = 0.5                # Brightness for the early and late LEDs in the orbital plane animation
     min_elev: float             = 0                         # Minimum elevation
     min_elev_brightness: int    = 127                       # Brightness corresponding to the minimum elevation
     max_elev: float             = 90                        # Maximum elevation

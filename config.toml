@@ -38,6 +38,8 @@ update-interval = 1         # Update interval of the LEDs in seconds
 [leds.satellites]
 color-healthy = [0, 255, 0]                                 # [R,G,B] color to use for healthy satellites
 color-unhealthy = [255, 0, 0]                               # [R,G,B] color to use for unhealthy satellites
+color-plane = [255, 255, 255]                               # [R,G,B] color to use to display the orbital plane
+brightness-early-late-plane = 0.5                           # Brightness for the early and late LEDs in the orbital plane animation
 min-elev = 0.0                                              # Minimum elevation
 min-elev-brightness = 127                                   # Brightness corresponding to the minimum elevation
 max-elev = 90.0                                             # Maximum elevation

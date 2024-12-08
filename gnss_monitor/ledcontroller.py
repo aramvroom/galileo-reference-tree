@@ -1,3 +1,4 @@
+import itertools
 import time
 from itertools import cycle
 
@@ -50,8 +51,9 @@ class LedController(object):
         self.ledstrip.setPixelColor(self.get_led_idx(sat_idx), color)
 
     def show_plane(self, led_indices):
-        mid_color = Color(255, 255, 255)
-        early_late_color = Color(127, 127, 127)
+        mid_color = Color(*self.config.satellites.color_plane)
+        color_with_brightness = [round(i * self.config.satellites.brightness_early_late_plane) for i in self.config.satellites.color_plane]
+        early_late_color = Color(*color_with_brightness)
         reset_color = Color(0, 0, 0)
 
         very_early_cycle_plane = cycle(led_indices)
@@ -60,16 +62,16 @@ class LedController(object):
         late_cycle_plane = cycle(rotate_list(led_indices, 3))
         very_late_cycle_plane = cycle(rotate_list(led_indices, 4))
 
-        for prompt_led in prompt_cycle_plane:
+        for _ in itertools.count():
             self.ledstrip.setPixelColor(next(very_early_cycle_plane) - 1, reset_color)
             self.ledstrip.setPixelColor(next(early_cycle_plane) - 1, early_late_color)
-            self.ledstrip.setPixelColor(prompt_led - 1, mid_color)
+            self.ledstrip.setPixelColor(next(prompt_cycle_plane) - 1, mid_color)
             self.ledstrip.setPixelColor(next(late_cycle_plane) - 1, early_late_color)
             self.ledstrip.setPixelColor(next(very_late_cycle_plane) - 1, reset_color)
             time.sleep(1)
 
     def update_leds(self):
-        while True:
+        for _ in itertools.count():
             for satIdx in range(self.max_sats):
                 if len(self.azelev[satIdx]) and self.azelev[satIdx][1] >= 0:
                     self.set_sat_led(satIdx, self.ephemeris[satIdx].signalHealth)
