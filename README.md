@@ -1,0 +1,2 @@
+# gnss-monitor
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4ee3cd12e3d0450ead16bf84675f40fb)](https://app.codacy.com/gh/aramvroom/gnss-monitor?utm_source=github.com&utm_medium=referral&utm_content=aramvroom/gnss-monitor&utm_campaign=Badge_Grade)
