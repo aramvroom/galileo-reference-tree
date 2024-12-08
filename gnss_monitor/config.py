@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
+
 
 # Location to compute the visibilities at
 @dataclass
@@ -51,6 +52,8 @@ class SatellitesLEDSettings:
     orbit_plane_a: List[int]    = (41, 42, 43, 44, 45)      # LED numbers corresponding to orbital plane A
     orbit_plane_b: List[int]    = (51, 52, 53, 54, 55)      # LED numbers corresponding to orbital plane B
     orbit_plane_c: List[int]    = (61, 62, 63, 64, 65)      # LED numbers corresponding to orbital plane C
+    map_prns: List[int]         = (1, 2, 3)
+    map_leds: List[int]         = (0, 1, 2)
 
 
 # Settings related to the LED strip

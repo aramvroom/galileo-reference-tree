@@ -24,8 +24,14 @@ class LedController(object):
         self.azelev = azelev
         self.config = led_config
 
+        # Create dictionary to map PRN to LED indices
+        self.prn_to_led_map = {led_config.satellites.map_prns[i]: led_config.satellites.map_leds[i] for i in range(len(led_config.satellites.map_prns))}
+
+
     def get_led_idx(self, sat_idx):
-        return sat_idx
+        sat_prn = sat_idx + 1
+        led_idx = self.prn_to_led_map[sat_prn]
+        return led_idx
 
     def get_brightness(self, sat_idx):
         elev = self.azelev[sat_idx][1]
