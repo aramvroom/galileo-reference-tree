@@ -9,7 +9,7 @@ from dataclass_binder import Binder
 
 from gnss_monitor import constants
 from gnss_monitor.config import Config
-from gnss_monitor.ntripclient_new import NtripClientNew
+from gnss_monitor.ntripclient import NtripClient
 from gnss_monitor.plotleds import LedPlot
 from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.skyplot import SkyPlot
@@ -62,8 +62,8 @@ if __name__ == '__main__':
 
     try:
         # Start RTCM retrieval loop
-        tmp = NtripClientNew(ephemeris, azelev, config.ntrip)
-        p1 = threading.Thread(target=tmp.get_ephemeris_loop)
+        client = NtripClient(ephemeris, azelev, config.ntrip)
+        p1 = threading.Thread(target=client.get_ephemeris_loop)
         p1.daemon = True
         p1.start()
 
