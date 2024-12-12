@@ -30,7 +30,10 @@ class LedController(object):
 
     def get_led_idx(self, sat_idx):
         sat_prn = sat_idx + 1
-        led_idx = self.prn_to_led_map[sat_prn]
+        try:
+            led_idx = self.prn_to_led_map[sat_prn]
+        except:
+            led_idx = -1
         return led_idx
 
     def get_brightness(self, sat_idx):
@@ -54,9 +57,16 @@ class LedController(object):
         brightness = self.get_brightness(sat_idx) / self.config.general.led_max_brightness
         led_color_with_elev = [round(i * brightness) for i in led_color]
         color = Color(*led_color_with_elev)
-        self.ledstrip.setPixelColor(self.get_led_idx(sat_idx), color)
+        led_idx = self.get_led_idx(sat_idx)
+        # Catch the case where the led index is not found
+        if led_idx >= 0:
+            self.ledstrip.setPixelColor(led_idx, color)
+
 
     def show_plane(self, led_indices):
+        # Only keep the LED indices which are not already satellites
+        led_indices =  [x for x in led_indices if x not in self.config.satellites.map_leds]
+
         mid_color = Color(*self.config.satellites.color_plane)
         color_with_brightness = [round(i * self.config.satellites.brightness_early_late_plane) for i in self.config.satellites.color_plane]
         early_late_color = Color(*color_with_brightness)
