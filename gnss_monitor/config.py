@@ -70,3 +70,4 @@ class Config:
     ntrip: Ntrip        = Ntrip        # Settings related to the NTRIP Client and Caster
     leds: LEDs          = LEDs         # Settings related to the LED strip
     verbose: bool   = False            # Run verbosely
+    simulation_speed: int = 1          # Simulation speed (1 = realtime)

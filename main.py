@@ -16,8 +16,9 @@ from gnss_monitor.skyplot import SkyPlot
 from gnss_monitor.transform import geodetic2aer
 from gnss_monitor.ledcontroller import LedController
 
+TIME_START = datetime.datetime.now(datetime.UTC)
 
-def propagate_all(all_ephem, all_azelev, location, verbose=False):
+def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=False):
     # Start continuous loop
     while True:
         # Loop over all the ephemeris
@@ -26,7 +27,7 @@ def propagate_all(all_ephem, all_azelev, location, verbose=False):
 
             # If it has a Time of Ephemeris, it can be propagated
             if eph.toe:
-                x, y, z = eph.propagate(getCurrentToW())
+                x, y, z = eph.propagate(getCurrentToW(simulation_speed))
 
                 # Convert to azimuth, elevation and range
                 az, elev, r = geodetic2aer(x, y, z, location.latitude_deg, location.longitude_deg,
@@ -40,8 +41,8 @@ def propagate_all(all_ephem, all_azelev, location, verbose=False):
 def get_utc_now():
     return datetime.datetime.now(datetime.UTC)
 
-def getCurrentToW():
-    current_time = get_utc_now()
+def getCurrentToW(simulation_speed):
+    current_time = (get_utc_now() - TIME_START) * simulation_speed + TIME_START
     gps_time_now = Time(current_time, format='datetime').to_value('gps')
     gps_tow = gps_time_now % constants.SEC_IN_WEEK
     return gps_tow
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         p1.start()
 
         # Start propagation loop
-        p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.verbose])
+        p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.simulation_speed, config.verbose])
         p2.daemon = True
         p2.start()
 

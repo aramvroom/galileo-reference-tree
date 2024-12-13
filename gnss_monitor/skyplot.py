@@ -26,7 +26,11 @@ class SkyPlot(object):
     def update_plot(self, ephemeris, azelev):
         plt.show()
         for satIdx in range(self.max_sats):
-            if len(azelev[satIdx]) and azelev[satIdx][1] >= 0:
+            if len(azelev[satIdx]) and azelev[satIdx][1] < 0:
+                Line2D.set_alpha(self.sats_plot[satIdx][0], 0)
+                self.annot[satIdx].set_alpha(0)
+            elif len(azelev[satIdx]) and azelev[satIdx][1] >= 0:
+                Line2D.set_alpha(self.sats_plot[satIdx][0], 1)
                 Line2D.set_xdata(self.sats_plot[satIdx][0], [azelev[satIdx][0] / 180 * pi])
                 Line2D.set_ydata(self.sats_plot[satIdx][0], [azelev[satIdx][1]])
                 if not ephemeris[satIdx].signalHealth:
@@ -34,6 +38,7 @@ class SkyPlot(object):
                 else:
                     Line2D.set_color(self.sats_plot[satIdx][0], 'r')
 
+                self.annot[satIdx].set_alpha(1)
                 self.annot[satIdx].xy = [azelev[satIdx][0] / 180 * pi, azelev[satIdx][1]]
                 self.annot[satIdx].set_x(azelev[satIdx][0] / 180 * pi)
                 self.annot[satIdx].set_y(azelev[satIdx][1])

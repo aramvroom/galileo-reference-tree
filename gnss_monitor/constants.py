@@ -4,7 +4,7 @@ SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed atte
 MAX_RECONNECTS = 1
 MAX_RECONNECT_TIMEOUT = 1200
 NTRIP_INTERVAL = 1  # So the first one is 1 second
-PROPAGATION_INTERVAL = 20
+PROPAGATION_INTERVAL = 1
 PLOTTING_INTERVAL = 0.1
 
 # Natural & WGS84 Constants

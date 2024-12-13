@@ -48,8 +48,10 @@ class LedController(object):
             brightness = 0
         return brightness
 
-    def set_sat_led(self, sat_idx, signal_health):
-        if not signal_health:
+    def set_sat_led(self, sat_idx, elevation, signal_health):
+        if elevation < self.config.satellites.min_elev:
+            led_color = [0, 0, 0]
+        elif not signal_health:
             led_color = self.config.satellites.color_healthy
         else:
             led_color = self.config.satellites.color_unhealthy
@@ -90,6 +92,6 @@ class LedController(object):
         for _ in itertools.count():
             for satIdx in range(self.max_sats):
                 if len(self.azelev[satIdx]) and self.azelev[satIdx][1] >= 0:
-                    self.set_sat_led(satIdx, self.ephemeris[satIdx].signalHealth)
+                    self.set_sat_led(satIdx, self.azelev[satIdx][1], self.ephemeris[satIdx].signalHealth)
             self.ledstrip.show()
             time.sleep(self.config.general.update_interval)
