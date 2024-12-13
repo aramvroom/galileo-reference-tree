@@ -79,11 +79,11 @@ class LedController(object):
         very_late_cycle_plane = cycle(rotate_list(led_indices, 4))
 
         for _ in itertools.count():
-            self.ledstrip.setPixelColor(next(very_early_cycle_plane) - 1, reset_color)
-            self.ledstrip.setPixelColor(next(early_cycle_plane) - 1, early_late_color)
-            self.ledstrip.setPixelColor(next(prompt_cycle_plane) - 1, mid_color)
-            self.ledstrip.setPixelColor(next(late_cycle_plane) - 1, early_late_color)
-            self.ledstrip.setPixelColor(next(very_late_cycle_plane) - 1, reset_color)
+            self.ledstrip.setPixelColor(next(very_early_cycle_plane), reset_color)
+            self.ledstrip.setPixelColor(next(early_cycle_plane), early_late_color)
+            self.ledstrip.setPixelColor(next(prompt_cycle_plane), mid_color)
+            self.ledstrip.setPixelColor(next(late_cycle_plane), early_late_color)
+            self.ledstrip.setPixelColor(next(very_late_cycle_plane), reset_color)
             time.sleep(1)
 
     def update_leds(self):
