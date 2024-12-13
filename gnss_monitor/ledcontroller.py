@@ -91,7 +91,7 @@ class LedController(object):
     def update_leds(self):
         for _ in itertools.count():
             for satIdx in range(self.max_sats):
-                if len(self.azelev[satIdx]) and self.azelev[satIdx][1] >= 0:
+                if len(self.azelev[satIdx]):
                     self.set_sat_led(satIdx, self.azelev[satIdx][1], self.ephemeris[satIdx].signalHealth)
             self.ledstrip.show()
             time.sleep(self.config.general.update_interval)
