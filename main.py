@@ -75,9 +75,8 @@ if __name__ == '__main__':
 
         # Start LED update loop for satellites
         ledController = LedController(constants.MAX_SATS, ephemeris, azelev, config.leds)
-        ledController.update_leds()
-        #p3 = threading.Thread(target=ledController.update_leds)
-        #p3.start()
+        p3 = threading.Thread(target=ledController.update_leds)
+        p3.start()
 
         # Start LED update loop for orbital planes
         p4 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a])
