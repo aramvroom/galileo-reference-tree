@@ -121,10 +121,10 @@ class TestLedController(unittest.TestCase):
         prompt_color = LEDs.satellites.color_plane
 
         expected_color_5 = (0,0,0)
-        expected_color_6 = early_late_color
-        expected_color_7 = prompt_color
-        expected_color_8 = early_late_color
-        expected_color_9 = (0, 0, 0)
+        expected_color_6 = (0,0,0)
+        expected_color_7 = early_late_color
+        expected_color_8 = prompt_color
+        expected_color_9 = early_late_color
 
         # Execute
         with patch("itertools.count", side_effect=mocked_count):
