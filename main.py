@@ -41,7 +41,7 @@ def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=F
 def get_utc_now():
     return datetime.datetime.now(datetime.UTC)
 
-def getCurrentToW(simulation_speed):
+def getCurrentToW(simulation_speed = 1):
     current_time = (get_utc_now() - TIME_START) * simulation_speed + TIME_START
     gps_time_now = Time(current_time, format='datetime').to_value('gps')
     gps_tow = gps_time_now % constants.SEC_IN_WEEK
