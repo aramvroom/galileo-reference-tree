@@ -21,7 +21,7 @@ class TestTransform(unittest.TestCase):
         # Prepare
         x, y, z = lla2ecef(52.0, 4.0, 50.0)  # Observer's location
         target_lat, target_lon, target_alt = 53.0, 5.0, 100.0  # Target's location
-        expected_az, expected_elev, expected_r = 211.7926184361850, -0.607305726367828, 130358.5598826873   # From Octave
+        expected_az, expected_elev, expected_r = 211.7926184361850, -0.607305726367828, 130358.5598826873  # From Octave
 
         # Execute
         found_az, found_elev, found_range = ecef2aer(x, y, z, target_lat, target_lon, target_alt)
@@ -35,7 +35,7 @@ class TestTransform(unittest.TestCase):
         # Prepare
         ref_lat, ref_lon = 52.0, 4.0  # Reference point
         dx, dy, dz = 1000.0, 2000.0, 3000.0  # Offset in ECEF
-        expected_east, expected_north, expected_up = 1925.371626775511, 950.9555240773523, 3064.086762814848
+        expected_east, expected_north, expected_up = 1925.371626775511, 950.9555240773523, 3064.086762814848   # From Octave
 
         # Execute
         east, north, up = ecef2enu(dx, dy, dz, ref_lat, ref_lon)
