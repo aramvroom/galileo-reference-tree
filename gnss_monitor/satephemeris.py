@@ -1,7 +1,4 @@
 from math import pi, sqrt, sin, atan2, cos
-
-from pyrtcm import RTCM_DATA_FIELDS
-
 from gnss_monitor import constants
 
 
@@ -34,7 +31,7 @@ class SatEphemeris(object):
         self.omega = 0
         self.OmegaDot = 0
 
-    def map_to_ephemeris(self, rtcm: RTCM_DATA_FIELDS):
+    def map_to_ephemeris(self, rtcm):
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
         self.prn = rtcm.DF252
         self.signalHealth = rtcm.DF287

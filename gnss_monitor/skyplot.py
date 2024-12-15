@@ -19,9 +19,10 @@ class SkyPlot(object):
         self.ax.set_yticks([0, 15, 30, 45, 60, 90])
 
         satIdx: int
+        default_coords = [-5, -5]
         for satIdx in range(max_sats):
             self.sats_plot[satIdx] = plt.polar([], [], 'g.')
-            self.annot[satIdx] = self.ax.annotate('%s' % (satIdx + 1), xy=[-5, -5], textcoords='data')
+            self.annot[satIdx] = self.ax.annotate('%s' % (satIdx + 1), xy=default_coords, textcoords='data')
 
     def update_plot(self, ephemeris, azelev):
         plt.show()
