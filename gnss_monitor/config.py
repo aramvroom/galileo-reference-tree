@@ -28,7 +28,7 @@ class Ntrip:
 class GeneralLEDSettings:
     led_count: int      = 100           # Number of LED pixels
     gpio_pin: int       = 18            # GPIO pin connected to the pixels (18 uses PWM, 10 uses SPI /dev/spidev0.0).
-    led_freq_hz: float  = 800E3         # LED signal frequency in hertz (usually 800kHz)
+    led_freq_hz: int    = 800000        # LED signal frequency in hertz (usually 800kHz)
     dma_channel: int    = 10            # DMA channel to use for generating signal (try 10)
     led_max_brightness: int = 255       # Set to 0 for darkest and 255 for brightest
     invert_signal: bool     = False     # True to invert the signal (when using NPN transistor level shift)

@@ -26,7 +26,7 @@ username-password = "anonymous:pass"    # The username and password to connect w
 [leds.general]
 led-count = 200             # Number of LED pixels.
 gpio-pin = 18               # GPIO pin connected to the pixels (18 uses PWM, 10 uses SPI /dev/spidev0.0).
-led-freq-hz = 800e3         # LED signal frequency in hertz (usually 800khz)
+led-freq-hz = 800000        # LED signal frequency in hertz (usually 800khz)
 dma-channel = 10            # DMA channel to use for generating signal (try 10)
 led-max-brightness = 255    # Set to 0 for darkest and 255 for brightest
 invert-signal = false       # True to invert the signal (when using NPN transistor level shift)
