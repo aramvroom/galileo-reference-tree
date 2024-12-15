@@ -1,6 +1,5 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
-
 
 # Location to compute the visibilities at
 @dataclass
@@ -34,7 +33,7 @@ class GeneralLEDSettings:
     led_max_brightness: int = 255       # Set to 0 for darkest and 255 for brightest
     invert_signal: bool     = False     # True to invert the signal (when using NPN transistor level shift)
     channel: int            = 0         # set to '1' for GPIOs 13, 19, 41, 45 or 53
-    led_strip_type: str     = "_rpi_ws281x.WS2811_STRIP_RGB"    # The type of LED strip, see https://github.com/HarmvZ/rpi_ws281x_mock/blob/master/rpi_ws281x/rpi_ws281x_mock.py#L128
+    led_strip_type: str     = "WS2811_STRIP_RGB"    # The type of LED strip, see https://github.com/HarmvZ/rpi_ws281x_mock/blob/master/rpi_ws281x/rpi_ws281x_mock.py#L128
     update_interval: int    = 1         # Update interval of the LEDs in seconds
 
 

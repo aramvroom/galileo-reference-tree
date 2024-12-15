@@ -13,6 +13,17 @@ def mocked_count():
 
 
 class TestLedController(unittest.TestCase):
+    def test_strip_type_to_int(self):
+        # Prepare
+        strip_type = "SK6812_STRIP"
+        expected_int = 0x00081000
+
+        # Execute
+        found_int = strip_type_to_int(strip_type)
+
+        # Verify
+        self.assertEqual(found_int, expected_int)
+
 
     def test_rotate_list_left(self):
         # Prepare
