@@ -16,7 +16,7 @@ def lla2ecef(lat, lon, alt):
     return x, y, z
 
 
-def geodetic2aer(x, y, z, lat0, lon0, alt0):
+def ecef2aer(x, y, z, lat0, lon0, alt0):
     x0, y0, z0 = lla2ecef(lat0, lon0, alt0)
     e, n, u = ecef2enu(x - x0, y - y0, z - z0, lat0, lon0)
 
@@ -28,13 +28,13 @@ def geodetic2aer(x, y, z, lat0, lon0, alt0):
     return az, elev, slant_range
 
 
-def ecef2enu(u, v, w, lat0, lon0):
+def ecef2enu(dx, dy, dz, lat0, lon0):
 
     lat0 *= constants.DEG_TO_RAD
     lon0 *= constants.DEG_TO_RAD
 
-    t = cos(lon0) * u + sin(lon0) * v
-    east = -sin(lon0) * u + cos(lon0) * v
-    up = cos(lat0) * t + sin(lat0) * w
-    north = -sin(lat0) * t + cos(lat0) * w
+    t = cos(lon0) * dx + sin(lon0) * dy
+    east = -sin(lon0) * dx + cos(lon0) * dy
+    up = cos(lat0) * t + sin(lat0) * dz
+    north = -sin(lat0) * t + cos(lat0) * dz
     return east, north, up

@@ -13,13 +13,15 @@ from gnss_monitor.ntripclient import NtripClient
 from gnss_monitor.plotleds import LedPlot
 from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.skyplot import SkyPlot
-from gnss_monitor.transform import geodetic2aer
+from gnss_monitor.transform import lla2ecef, ecef2aer
 from gnss_monitor.ledcontroller import LedController
 
 TIME_START = datetime.datetime.now(datetime.UTC)
 
 def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=False):
     # Start continuous loop
+    x0, y0, z0 = lla2ecef(location.latitude_deg, location.longitude_deg, location.altitude_m)
+
     while True:
         # Loop over all the ephemeris
         for idx in range(constants.MAX_SATS):
@@ -30,7 +32,7 @@ def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=F
                 x, y, z = eph.propagate(getCurrentToW(simulation_speed))
 
                 # Convert to azimuth, elevation and range
-                az, elev, r = geodetic2aer(x, y, z, location.latitude_deg, location.longitude_deg,
+                az, elev, r = ecef2aer(x, y, z, location.latitude_deg, location.longitude_deg,
                                            location.altitude_m)
                 all_azelev[idx] = [az, elev]
                 if verbose:
