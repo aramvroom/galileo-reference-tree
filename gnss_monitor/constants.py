@@ -1,5 +1,4 @@
 from math import pi
-
 SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed attempt
 MAX_RECONNECTS = 1
 MAX_RECONNECT_TIMEOUT = 1200

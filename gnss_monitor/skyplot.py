@@ -21,7 +21,7 @@ class SkyPlot(object):
         satIdx: int
         default_coords = [-5, -5]
         for satIdx in range(max_sats):
-            self.sats_plot[satIdx] = plt.polar([], [], 'g.')
+            self.sats_plot[satIdx] = plt.polar([], [], color='green',marker='.')
             self.annot[satIdx] = self.ax.annotate('%s' % (satIdx + 1), xy=default_coords, textcoords='data')
 
     def update_plot(self, ephemeris, azelev):
@@ -34,10 +34,12 @@ class SkyPlot(object):
                 Line2D.set_alpha(self.sats_plot[satIdx][0], 1)
                 Line2D.set_xdata(self.sats_plot[satIdx][0], [azelev[satIdx][0] / 180 * pi])
                 Line2D.set_ydata(self.sats_plot[satIdx][0], [azelev[satIdx][1]])
-                if not ephemeris[satIdx].signalHealth:
-                    Line2D.set_color(self.sats_plot[satIdx][0], 'g')
+                if ephemeris[satIdx].signalHealth == 0:
+                    Line2D.set_color(self.sats_plot[satIdx][0], color='green')
+                elif ephemeris[satIdx].signalHealth == -1:
+                    Line2D.set_color(self.sats_plot[satIdx][0], color='orange')
                 else:
-                    Line2D.set_color(self.sats_plot[satIdx][0], 'r')
+                    Line2D.set_color(self.sats_plot[satIdx][0], color='red')
 
                 self.annot[satIdx].set_alpha(1)
                 self.annot[satIdx].xy = [azelev[satIdx][0] / 180 * pi, azelev[satIdx][1]]

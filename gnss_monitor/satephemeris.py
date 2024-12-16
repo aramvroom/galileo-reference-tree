@@ -1,4 +1,9 @@
 from math import pi, sqrt, sin, atan2, cos
+
+from astropy.time import Time
+from skyfield.api import load
+from skyfield.sgp4lib import EarthSatellite
+
 from gnss_monitor import constants
 
 
@@ -6,7 +11,7 @@ class SatEphemeris(object):
     def __init__(self):
         self.gst = 0
         self.prn = 0
-        self.signalHealth = 0
+        self.signalHealth = -1  # Unknown signal health
         self.dataValidity = 0
         self.wn = 0
         self.iodNav = 0
@@ -30,6 +35,7 @@ class SatEphemeris(object):
         self.crc = 0
         self.omega = 0
         self.OmegaDot = 0
+        self.tle: EarthSatellite = None
 
     def map_to_ephemeris(self, rtcm):
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
@@ -59,7 +65,23 @@ class SatEphemeris(object):
         self.omega = rtcm.DF310 * pi
         self.OmegaDot = rtcm.DF311 * pi
 
-    def propagate(self, tow):
+    def propagate(self, wn, tow):
+        if self.wn == 0 and self.tle is not None:
+            return self.propagate_tle(wn, tow)
+        elif self.wn > 0:
+            return self.propagate_ephemeris(tow)
+        else:
+            raise "Attempted to propagate satellite without ephemeris or TLE"
+
+
+    def propagate_tle(self, wn, tow):
+        ts = load.timescale()
+        utc_time = ts.from_astropy(Time(wn * constants.SEC_IN_WEEK + tow,format='gps'))
+        x, y, z = self.tle.at(utc_time).position.m
+        return x, y, z
+
+
+    def propagate_ephemeris(self, tow):
         tk = tow - self.toe
         if tk > constants.SEC_IN_WEEK / 2:
             tk -= constants.SEC_IN_WEEK
@@ -92,7 +114,7 @@ class SatEphemeris(object):
         x = x1 * cos(Omega) - y1 * cos(i) * sin(Omega)
         y = x1 * sin(Omega) + y1 * cos(i) * cos(Omega)
         z = y1 * sin(i)
-        return x, y, z
+        return x,y,z
 
     def getEccentricAnomaly(self, mean_anomaly):
         nr_next = 0

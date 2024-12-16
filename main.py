@@ -3,6 +3,7 @@
 import datetime
 import threading
 import time
+from math import floor
 
 from astropy.time import Time
 from dataclass_binder import Binder
@@ -15,21 +16,21 @@ from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.skyplot import SkyPlot
 from gnss_monitor.transform import lla2ecef, ecef2aer
 from gnss_monitor.ledcontroller import LedController
+from gnss_monitor.twolineelements import TwoLineElements
 
 TIME_START = datetime.datetime.now(datetime.UTC)
 
 def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=False):
     # Start continuous loop
-    x0, y0, z0 = lla2ecef(location.latitude_deg, location.longitude_deg, location.altitude_m)
-
     while True:
         # Loop over all the ephemeris
         for idx in range(constants.MAX_SATS):
             eph = all_ephem[idx]
 
             # If it has a Time of Ephemeris, it can be propagated
-            if eph.toe:
-                x, y, z = eph.propagate(getCurrentToW(simulation_speed))
+            if eph.toe or eph.tle is not None:
+                wn, tow = getCurrentToW(simulation_speed)
+                x, y, z = eph.propagate(wn, tow)
 
                 # Convert to azimuth, elevation and range
                 az, elev, r = ecef2aer(x, y, z, location.latitude_deg, location.longitude_deg,
@@ -48,7 +49,8 @@ def getCurrentToW(simulation_speed = 1):
     current_time = (get_utc_now() - TIME_START) * simulation_speed + TIME_START
     gps_time_now = Time(current_time, format='datetime').to_value('gps')
     gps_tow = gps_time_now % constants.SEC_IN_WEEK
-    return gps_tow
+    gps_wn = floor(gps_time_now / constants.SEC_IN_WEEK)
+    return gps_wn, gps_tow
 
 
 if __name__ == '__main__':
@@ -65,6 +67,10 @@ if __name__ == '__main__':
     azelev = [[] for _ in range(constants.MAX_SATS)]
 
     try:
+        # Get the TLE
+        tle = TwoLineElements()
+        tle.set_tle(ephemeris)
+
         # Start RTCM retrieval loop
         client = NtripClient(ephemeris, azelev, config.ntrip)
         p1 = threading.Thread(target=client.get_ephemeris_loop)

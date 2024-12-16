@@ -67,7 +67,7 @@ class MyTestCase(unittest.TestCase):
         expected_x, expected_y, expected_z = 417440.572,  18971103.221, 22713182.960    # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
 
         # Execute
-        x,y,z = sat_ephemeris.propagate(sat_ephemeris.toe)
+        x,y,z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe)
 
         # Verify (within 2 meters)
         self.assertAlmostEqual(x, expected_x, delta=2)
@@ -80,7 +80,7 @@ class MyTestCase(unittest.TestCase):
         sat_ephemeris.map_to_ephemeris(self.rtcm)
         expected_x, expected_y, expected_z = -654659.021, 19786342.403, 22002213.080    # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
 
-        # Execute (propgate to 10 minutes later)
+        # Execute (propagate to 10 minutes later)
         x,y,z = sat_ephemeris.propagate(sat_ephemeris.toe + 600)
 
         # Verify (within 2 meters)
