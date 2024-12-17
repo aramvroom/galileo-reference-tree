@@ -81,7 +81,7 @@ class MyTestCase(unittest.TestCase):
         expected_x, expected_y, expected_z = -654659.021, 19786342.403, 22002213.080    # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
 
         # Execute (propagate to 10 minutes later)
-        x,y,z = sat_ephemeris.propagate(sat_ephemeris.toe + 600)
+        x,y,z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe + 600)
 
         # Verify (within 2 meters)
         self.assertAlmostEqual(x, expected_x, delta=2)
