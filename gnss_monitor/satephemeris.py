@@ -1,4 +1,5 @@
 from math import pi, sqrt, sin, atan2, cos
+from multiprocessing.managers import Value
 
 from astropy.time import Time
 from skyfield.api import load
@@ -71,7 +72,7 @@ class SatEphemeris(object):
         elif self.wn > 0:
             return self.propagate_ephemeris(tow)
         else:
-            raise "Attempted to propagate satellite without ephemeris or TLE"
+            raise RuntimeError("Attempted to propagate satellite without ephemeris or TLE")
 
 
     def propagate_tle(self, wn, tow):
