@@ -107,7 +107,7 @@ class LedController(object):
             self.ledstrip.setPixelColor(next(prompt_cycle_plane), mid_color)
             self.ledstrip.setPixelColor(next(late_cycle_plane), early_late_color)
             self.ledstrip.setPixelColor(next(very_late_cycle_plane), reset_color)
-            time.sleep(1)
+            time.sleep(self.config.general.plane_interval)
 
     def update_leds(self):
         for _ in itertools.count():
