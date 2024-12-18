@@ -1,12 +1,14 @@
 from math import pi, sqrt, sin, atan2, cos
-from multiprocessing.managers import Value
 
+from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
 from astropy.time import Time
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
-
 from gnss_monitor import constants
 
+from astropy import coordinates as coord
+from astropy import units as u
+from astropy.time import Time
 
 class SatEphemeris(object):
     def __init__(self):
@@ -76,10 +78,30 @@ class SatEphemeris(object):
 
 
     def propagate_tle(self, wn, tow):
+        # Set the desired time
         ts = load.timescale()
-        utc_time = ts.from_astropy(Time(wn * constants.SEC_IN_WEEK + tow,format='gps'))
-        x, y, z = self.tle.at(utc_time).position.m
-        return x, y, z
+        astropy_time = Time(wn * constants.SEC_IN_WEEK + tow,format='gps')
+        time = ts.from_astropy(astropy_time)
+
+        # Get satellite position in ECI (GCRS in Skyfield terminology)
+        geocentric = self.tle.at(time)
+        x_eci, y_eci, z_eci = geocentric.position.m
+
+        # Create a GCRS (ECI) representation in Astropy
+        gcrs = GCRS(
+            CartesianRepresentation(x_eci, y_eci, z_eci, unit="m"),
+            obstime=astropy_time,
+        )
+
+        # Transform from GCRS (ECI) to ITRS (ECEF)
+        itrs = gcrs.transform_to(ITRS(obstime=astropy_time))
+
+        # Extract ECEF coordinates
+        x_ecef = itrs.x.to("m").value
+        y_ecef = itrs.y.to("m").value
+        z_ecef = itrs.z.to("m").value
+
+        return x_ecef, y_ecef, z_ecef
 
 
     def propagate_ephemeris(self, tow):

@@ -5,6 +5,8 @@ import io
 
 from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.twolineelements import TwoLineElements
+from main import getCurrentToW
+
 
 class TestTwoLineElements(unittest.TestCase):
 
@@ -63,8 +65,8 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         tle.get_gsat_to_svid_map()
 
         # Assertions
-        self.assertEqual(tle.gsat_to_svid_map['GSAT0201'], 1)
-        self.assertEqual(tle.gsat_to_svid_map['GSAT0202'], 2)
+        self.assertEqual(tle.gsat_to_svid_map['GSAT0101'], 1)
+        self.assertEqual(tle.gsat_to_svid_map['GSAT0102'], 2)
 
     @patch('gnss_monitor.twolineelements.requests.get')
     @patch('gnss_monitor.twolineelements.load.open')

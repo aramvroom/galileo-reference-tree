@@ -78,6 +78,7 @@ if __name__ == '__main__':
         p1.start()
 
         # Start propagation loop
+       # propagate_all(ephemeris, azelev, config.location, config.simulation_speed, config.verbose)
         p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.simulation_speed, config.verbose])
         p2.daemon = True
         p2.start()
