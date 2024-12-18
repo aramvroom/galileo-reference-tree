@@ -45,11 +45,8 @@ class TestLedPlot(unittest.TestCase):
         self.assertEqual(len(led_plot.leds_plot), 100)
         mock_plot.assert_called()
 
-    @patch("matplotlib.pyplot.show")
-    @patch("matplotlib.pyplot.draw")
-    @patch("matplotlib.pyplot.pause")
     @patch("matplotlib.lines.Line2D.set_color")
-    def test_update_plot(self, mock_set_color, mock_pause, mock_draw, mock_show):
+    def test_update_plot(self, mock_set_color):
         # Execute
         self.led_plot.update_plot()
 

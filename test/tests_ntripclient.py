@@ -60,7 +60,7 @@ class TestNtripClient(unittest.TestCase):
         mock_socket.recv.return_value = b"ICY 200 OK\r\n"
 
         # Execute
-        client = NtripClient(self.ephem, self.azelev, self.ntrip_config)
+        NtripClient(self.ephem, self.azelev, self.ntrip_config)
 
         # Verify
         mock_create_connection.assert_called_with((self.ntrip_config.address, self.ntrip_config.port))
@@ -99,9 +99,6 @@ class TestNtripClient(unittest.TestCase):
         mock_parsed_data.DF252 = 1  # satID
         mock_parsed_data.DF289 = 2
         mock_parsed_data.DF293 = 3
-
-        # GST calculated as DF289 * SEC_IN_WEEK + DF293
-        expected_gst = (2 * constants.SEC_IN_WEEK) + 3
 
         # Set the mocked RTCMReader to yield the mocked parsed data
         mock_reader = MagicMock()

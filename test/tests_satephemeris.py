@@ -1,22 +1,26 @@
+import io
 import struct
 import unittest
 from math import pi
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
+from astropy.time import Time
 from pyrtcm import RTCM_DATA_FIELDS, RTCMMessage
 
 from gnss_monitor import constants
-from gnss_monitor.satephemeris import SatEphemeris
+from gnss_monitor.satephemeris import SatEphemeris, correct_wn_for_rollover
+from gnss_monitor.twolineelements import TwoLineElements
 
-
-class MyTestCase(unittest.TestCase):
+class TestSatEphemeris(unittest.TestCase):
     def setUp(self):
         # One of the received Galileo ephemeris messages (ephemeris for 2024/12/15 12:30:00 UTC)
         self.rtcm = RTCMMessage(payload=b'A`\x94\xa4Kk\xd5\xa8.\xe0\x00\x01\x9e\x00\xbfZ\xa0\x1a\xa8}\xe8\xd5B\xda\xd8\x13\x94\x00\xf5&`f\x92\xa8\x13\xfd\x10.\xef\xfe\xc6\xc9\xb3P\xbf\xfd\xc2u35\x90\xa6Q\x99\x93\xc8\xef\xfc~\xdf\xbb\xed\x00')
 
-    def test_map_to_ephemeris(self):
+    @patch("astropy.time.Time.to_value")
+    def test_map_to_ephemeris(self, mock_to_value):
         # Prepare
         sat_ephemeris = SatEphemeris()
+        mock_to_value.return_value = 1400 * constants.SEC_IN_WEEK
 
         # Execute
         sat_ephemeris.map_to_ephemeris(self.rtcm)
@@ -88,9 +92,58 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(y, expected_y, delta=2)
         self.assertAlmostEqual(z, expected_z, delta=2)
 
+    @patch('gnss_monitor.twolineelements.requests.get')
+    @patch('gnss_monitor.twolineelements.load.open')
+    def test_propagate_tle(self, mock_open_file, mock_requests_get):
+        # Prepare
+        # Mocking TLE object is complex. As the TLE loader is already covered by another UT, it can be used here instead
+        mock_tle = """OBJECT_NAME,OBJECT_ID,EPOCH,MEAN_MOTION,ECCENTRICITY,INCLINATION,RA_OF_ASC_NODE,ARG_OF_PERICENTER,MEAN_ANOMALY,EPHEMERIS_TYPE,CLASSIFICATION_TYPE,NORAD_CAT_ID,ELEMENT_SET_NO,REV_AT_EPOCH,BSTAR,MEAN_MOTION_DOT,MEAN_MOTION_DDOT
+GSAT0211 (GALILEO 14),2016-030A,2024-12-15T22:14:03.283296,1.70473113,.0003845,55.2859,236.7768,4.5714,355.5270,0,U,41549,999,5330,0,.28E-6,0"""
+        mock_html = """
+        <table>
+            <tr><th>Satellite Name</th><th>SV ID</th></tr>
+            <tr><td>GSAT0211</td><td>E02</td></tr>
+        </table>
+        """
 
+        # Mock file content with TLE CSV
+        mock_open_file.return_value = io.StringIO(mock_tle)
 
+        # Mock successful HTTP response with simplified HTML
+        mock_requests_get.return_value.status_code = 200
+        mock_requests_get.return_value.text = mock_html
 
+        # Load the TLE into a SatEphemeris array
+        sat_ephemeris = [SatEphemeris() for _ in range(2)]  # Placeholder for ephemeris list with empty dicts
+        tle = TwoLineElements()
+        tle.set_tle(sat_ephemeris)
+
+        # Also load the RTCM data into the SatEphemeris array
+        sat_ephemeris[1].map_to_ephemeris(self.rtcm)
+
+        # Execute, by propagating both the TLE and the ephemeris
+        x,y,z = sat_ephemeris[1].propagate_ephemeris(sat_ephemeris[1].toe + 600)
+        x_tle,y_tle,z_tle = sat_ephemeris[1].propagate_tle(sat_ephemeris[1].wn, sat_ephemeris[1].toe + 600)
+
+        # Verify, with a margin of 5km due to TLE inaccuracy
+        self.assertAlmostEqual(x, x_tle, delta=5e3)
+        self.assertAlmostEqual(y, y_tle, delta=5e3)
+        self.assertAlmostEqual(z, z_tle, delta=5e3)
+
+    @patch("astropy.time.Time.to_value")
+    def test_get_time_with_rollover(self, mock_to_value):
+        # Prepare
+        ephem_wn = 7890
+        expected_ephem_wn = 1746
+
+        current_wn, current_tow = 1025, 5678
+        mock_to_value.return_value = current_wn * constants.SEC_IN_WEEK + current_tow
+
+        # Execute
+        found_wn = correct_wn_for_rollover(ephem_wn)
+
+        # Verify
+        self.assertEqual(found_wn, expected_ephem_wn)
 
 if __name__ == '__main__':
     unittest.main()

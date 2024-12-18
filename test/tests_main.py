@@ -26,6 +26,5 @@ class TestMainFunctions(unittest.TestCase):
         self.assertEqual(found_wn, expected_wn)
         self.assertEqual(found_tow, expected_tow)
 
-
 if __name__ == '__main__':
     unittest.main()

@@ -1,10 +1,30 @@
-from math import pi, sqrt, sin, atan2, cos
+import datetime
+from math import pi, sqrt, sin, atan2, cos, floor, ceil
 
 from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
 from gnss_monitor import constants
 from astropy.time import Time
+
+def correct_wn_for_rollover(wn):
+    # Get current week number
+    gps_time_now = Time(datetime.datetime.now(datetime.UTC), format='datetime').to_value('gps')
+    wn_now = floor(gps_time_now / constants.SEC_IN_WEEK)
+
+    # Compute the number of rollovers between the input WN and the current WN
+    rollovers = (wn_now - wn) / constants.GPS_WEEKS_ROLLOVER
+
+    # Round towards zero
+    if rollovers >= 0:
+        rollovers = floor(rollovers)
+    else:
+        rollovers = ceil(rollovers)
+
+    # Update WN
+    wn_corrected = wn + rollovers * constants.GPS_WEEKS_ROLLOVER
+
+    return wn_corrected
 
 class SatEphemeris(object):
     def __init__(self):
@@ -41,7 +61,7 @@ class SatEphemeris(object):
         self.prn = rtcm.DF252
         self.signalHealth = rtcm.DF287
         self.dataValidity = rtcm.DF288
-        self.wn = rtcm.DF289
+        self.wn = correct_wn_for_rollover(rtcm.DF289)
         self.iodNav = rtcm.DF290
         self.iDot = rtcm.DF292 * pi
         self.toc = rtcm.DF293
@@ -73,10 +93,14 @@ class SatEphemeris(object):
             raise RuntimeError("Attempted to propagate satellite without ephemeris or TLE")
 
 
+# TODO CHECK WN FOR ROLLOVER
     def propagate_tle(self, wn, tow):
-        # Set the desired time
+        # Initialize timescale object
         ts = load.timescale()
-        astropy_time = Time(wn * constants.SEC_IN_WEEK + tow,format='gps')
+
+        # Create astropy time
+        astropy_time = Time(wn * constants.SEC_IN_WEEK + tow, format='gps')
+
         time = ts.from_astropy(astropy_time)
 
         # Get satellite position in ECI (GCRS in Skyfield terminology)

@@ -51,7 +51,7 @@ class LedController(object):
         sat_prn = sat_idx + 1
         try:
             led_idx = self.prn_to_led_map[sat_prn]
-        except:
+        except KeyError:
             led_idx = -1
         return led_idx
 
