@@ -1,13 +1,9 @@
 from math import pi, sqrt, sin, atan2, cos
 
 from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
-from astropy.time import Time
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
 from gnss_monitor import constants
-
-from astropy import coordinates as coord
-from astropy import units as u
 from astropy.time import Time
 
 class SatEphemeris(object):

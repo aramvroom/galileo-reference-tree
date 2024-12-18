@@ -70,8 +70,10 @@ class LedController(object):
     def set_sat_led(self, sat_idx, signal_health):
         if self.azelev[sat_idx][1] < self.config.satellites.min_elev:
             led_color = [0, 0, 0]
-        elif not signal_health:
+        elif signal_health == 0:
             led_color = self.config.satellites.color_healthy
+        elif signal_health == -1:
+            led_color = self.config.satellites.color_unknown
         else:
             led_color = self.config.satellites.color_unhealthy
 
