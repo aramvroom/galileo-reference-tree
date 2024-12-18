@@ -1,5 +1,5 @@
 verbose = false         # Run verbosely
-simulation-speed = 1    # Simulation speed (1 = realtime)
+simulation-speed = 1000    # Simulation speed (1 = realtime)
 
 # The location to compute the visibilities for
 [location]
@@ -32,7 +32,7 @@ led-max-brightness = 255    # Set to 0 for darkest and 255 for brightest
 invert-signal = false       # True to invert the signal (when using NPN transistor level shift)
 channel = 0                 # set to '1' for GPIOs 13, 19, 41, 45 or 53
 led-strip-type = 'WS2811_STRIP_RGB' # The type of LED strip, see gnss_monitor/ledcontroller.py
-update-interval = 1         # Update interval of the LEDs in seconds
+update-interval = 0.01         # Update interval of the LEDs in seconds
 
 # Settings for the LEDs related to the satellites
 [leds.satellites]
