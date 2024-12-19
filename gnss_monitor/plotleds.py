@@ -6,7 +6,37 @@ from matplotlib.lines import Line2D
 
 
 class LedPlot(object):
+    """
+    Visualization class to render a graphical representation of the LED strip.
+
+    The purpose of this class is to create a real-time visualization of the state of an
+    LED strip. The visual output is rendered using `matplotlib`. It is structured into a grid where
+    each LED is represented as a dot, and its color and brightness correspond to its physical state.
+
+    Attributes:
+        width (int): The number of LEDs per row in the grid representation.
+        strip (object): The LED strip object, assumed to have `numPixels`, `getPixelColorRGB`,
+            and `getBrightness` methods.
+        numleds (int): Total number of LEDs in the strip, derived from the `strip` object.
+        height (int): The number of rows in the grid representation, calculated as the total number
+            of LEDs divided by the width.
+        annot (list[list[object]]): Storage for annotations, used to label each LED in the grid.
+        leds_plot (list[list[object]]): Stores plot references for each LED dot on the visualization.
+        fig (object): The `matplotlib` figure object for the visualization.
+        ax (object): The `matplotlib` axes object for the visualization grid.
+    """
     def __init__(self, width, strip):
+        """
+        This class initializes a graphical representation of a grid of LEDs using matplotlib. The
+        LEDs are arranged in a 2D grid based on the given width and the total number of LEDs in
+        the provided LED strip. Each LED is displayed as a dot, and its index is annotated on the
+        plot. The plot displays the LEDs with specific configurations for the layout
+        (limits, background color, tick labels, etc.).
+
+        Parameters:
+            width (int): The width of the LED grid (number of columns).
+            strip (LED strip object): A LED strip object containing the LED data
+        """
         self.width = width
         self.strip = strip
         self.numleds = strip.numPixels()
@@ -35,6 +65,13 @@ class LedPlot(object):
                                                   textcoords='data', color=(1, 1, 1))
 
     def update_plot(self):
+        """
+        Updates the LED plot with the current RGB color and brightness values and refreshes the plot visualization.
+
+        Raises:
+            Any exceptions related to matplotlib rendering or datetime processing during the update process.
+
+        """
         plt.show()
         for ledIdx in range(self.numleds):
             red = self.strip.getPixelColorRGB(ledIdx).r / 255

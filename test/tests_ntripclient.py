@@ -49,7 +49,6 @@ class TestNtripClient(unittest.TestCase):
             ntrip_v2=True
         )
         self.ephem = [{} for _ in range(36)]
-        self.azelev = {}
 
     @patch("socket.create_connection")
     @patch("gnss_monitor.ntripclient.check_connection_response")
@@ -60,7 +59,7 @@ class TestNtripClient(unittest.TestCase):
         mock_socket.recv.return_value = b"ICY 200 OK\r\n"
 
         # Execute
-        NtripClient(self.ephem, self.azelev, self.ntrip_config)
+        NtripClient(self.ephem, self.ntrip_config)
 
         # Verify
         mock_create_connection.assert_called_with((self.ntrip_config.address, self.ntrip_config.port))
@@ -74,7 +73,7 @@ class TestNtripClient(unittest.TestCase):
         mock_connect_to_server.return_value = mock_socket
 
         # Execute
-        client = NtripClient(self.ephem, self.azelev, self.ntrip_config)
+        client = NtripClient(self.ephem, self.ntrip_config)
         request = client.get_mount_point_for_request().decode("ascii")
 
         # Verify
@@ -107,7 +106,7 @@ class TestNtripClient(unittest.TestCase):
 
         # Execute
         # Create the client and invoke get_ephemeris_loop
-        client = NtripClient(self.ephem, self.azelev, self.ntrip_config)
+        client = NtripClient(self.ephem, self.ntrip_config)
         client.get_ephemeris_loop()
 
         # Verify
@@ -125,7 +124,7 @@ class TestNtripClient(unittest.TestCase):
 
         # Execute and Verify
         with self.assertRaises(socket.error):
-            NtripClient(self.ephem, self.azelev, self.ntrip_config)
+            NtripClient(self.ephem, self.ntrip_config)
 
 if __name__ == '__main__':
     unittest.main()

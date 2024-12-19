@@ -9,7 +9,7 @@ from astropy.time import Time
 from dataclass_binder import Binder
 
 from gnss_monitor import constants
-from gnss_monitor.config import Config
+from gnss_monitor.config import Config, Location
 from gnss_monitor.ntripclient import NtripClient
 from gnss_monitor.plotleds import LedPlot
 from gnss_monitor.satephemeris import SatEphemeris
@@ -20,7 +20,34 @@ from gnss_monitor.twolineelements import TwoLineElements
 
 TIME_START = datetime.datetime.now(datetime.UTC)
 
-def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=False):
+def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1, verbose=False):
+    """
+    Continuously propagates ephemeris data and computes the satellites' azimuth and
+    elevation as observed from a specific location. The propagation is performed in a loop
+    for a predefined number of satellites, and the results are updated in the specified
+    all_ephem and azimuth-elevation output arrays.
+
+    Parameters:
+        all_ephem: List
+            A list of ephemeris data objects for satellites. Assumes a fixed length as defined
+            by constants.MAX_SATS.
+        all_azelev: List[List[float]]
+            A mutable list to store the resulting azimuth, elevation pairs for each satellite.
+        location: Location
+            A Location object which contains latitude, longitude, and altitude in degrees and
+            meters respectively.
+        simulation_speed: int, optional
+            Speed-up factor for the simulation's time progression. Default is 1.
+        verbose: bool, optional
+            If True, additional information about each satellite's azimuth, elevation, and
+            range is printed to the console. Default is False.
+
+    Returns:
+        None
+
+    Raises:
+        No exceptions explicitly raised by this method.
+    """
     # Start continuous loop
     while True:
         # Loop over all the ephemeris
@@ -42,10 +69,33 @@ def propagate_all(all_ephem, all_azelev, location, simulation_speed=1, verbose=F
 
 
 def get_utc_now():
+    """
+    This function retrieves the current date and time in UTC. It exists in order to allow mocking
+
+    Returns
+    -------
+    datetime.datetime
+        Current date and time in UTC format.
+    """
     return datetime.datetime.now(datetime.UTC)
 
 
 def getCurrentToW(simulation_speed = 1):
+    """
+        Calculates the current GPS Week Number (WN) and Time of Week (ToW) based on
+        the simulation speed and the current system UTC time. This utilizes a
+        predefined start time `TIME_START` and converts the time to GPS format
+        for further computations.
+
+        Parameters:
+            simulation_speed (int | float): The speed multiplier to simulate GPS
+                                            time, where 1 represents real-time.
+
+        Returns:
+            tuple: A tuple containing:
+                   - gps_wn (int): The current GPS Week Number.
+                   - gps_tow (float): The current Time of Week in seconds.
+    """
     current_time = (get_utc_now() - TIME_START) * simulation_speed + TIME_START
     gps_time_now = Time(current_time, format='datetime').to_value('gps')
     gps_tow = gps_time_now % constants.SEC_IN_WEEK
@@ -66,35 +116,32 @@ if __name__ == '__main__':
         ephemeris.append(SatEphemeris())
     azelev = [[] for _ in range(constants.MAX_SATS)]
 
+    running_threads = []
     try:
         # Get the TLE
         tle = TwoLineElements()
         tle.set_tle(ephemeris)
 
-        # Start RTCM retrieval loop
+        # Create RTCM retrieval loop
         client = NtripClient(ephemeris, azelev, config.ntrip)
-        p1 = threading.Thread(target=client.get_ephemeris_loop)
-        p1.daemon = True
-        p1.start()
+        running_threads.append(threading.Thread(target=client.get_ephemeris_loop))
 
-        # Start propagation loop
-       # propagate_all(ephemeris, azelev, config.location, config.simulation_speed, config.verbose)
-        p2 = threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.simulation_speed, config.verbose])
-        p2.daemon = True
-        p2.start()
+        # Create propagation loop
+        running_threads.append(threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.simulation_speed, config.verbose]))
 
-        # Start LED update loop for satellites
+        # Create LED update loop for satellites
         ledController = LedController(constants.MAX_SATS, ephemeris, azelev, config.leds)
-        p3 = threading.Thread(target=ledController.update_leds)
-        p3.start()
+        running_threads.append(threading.Thread(target=ledController.update_leds))
 
-        # Start LED update loop for orbital planes
-        p4 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a])
-        p5 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_b])
-        p6 = threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_c])
-        p4.start()
-        p5.start()
-        p6.start()
+        # Create LED update loop for orbital planes
+        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a]))
+        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_b]))
+        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_c]))
+
+        # Start all threads
+        for thread in running_threads:
+            thread.daemon = True
+            thread.start()
 
         # Start plotting loop. This has to be done in the main thread
         skyplot = SkyPlot(constants.MAX_SATS)
@@ -105,9 +152,5 @@ if __name__ == '__main__':
             time.sleep(constants.PLOTTING_INTERVAL)
 
     finally:
-        p1.join()
-        p2.join()
-        p3.join()
-        p4.join()
-        p5.join()
-        p6.join()
+        [thread.join() for thread in running_threads]
+

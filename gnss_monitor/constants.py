@@ -1,8 +1,6 @@
 from math import pi
-SLEEP_TIME_FACTOR = 2  # How much the sleep time increases with each failed attempt
-MAX_RECONNECTS = 1
-MAX_RECONNECT_TIMEOUT = 1200
-NTRIP_INTERVAL = 1  # So the first one is 1 second
+
+# Loop intervals
 PROPAGATION_INTERVAL = 0.1
 PLOTTING_INTERVAL = 0.1
 
@@ -19,6 +17,7 @@ WGS84_FIRST_ECCENTRICITY_SQUARED = 6.69437999014e-3
 RAD_TO_DEG = 180 / pi
 DEG_TO_RAD = pi / 180
 
+# Constellation constants
 DF_GALILEO_EPH = 1046
 MAX_SATS = 36
 GPS_WEEKS_ROLLOVER = 1024

@@ -93,7 +93,6 @@ class SatEphemeris(object):
             raise RuntimeError("Attempted to propagate satellite without ephemeris or TLE")
 
 
-# TODO CHECK WN FOR ROLLOVER
     def propagate_tle(self, wn, tow):
         # Initialize timescale object
         ts = load.timescale()
