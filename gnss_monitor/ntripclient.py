@@ -51,6 +51,7 @@ class NtripClient(object):
         socket (socket): A socket object used to manage the
             connection with the NTRIP caster/server. Initially set to None.
     """
+
     def __init__(self, ephem, ntrip_config: Ntrip):
         """
 
@@ -95,7 +96,6 @@ class NtripClient(object):
         mount_point_request += "\r\n"
         return bytes(mount_point_request, 'ascii')
 
-
     def connect_to_server(self):
         """
         Connects to the server and establishes a connection with the mount point. This involves creating a socket, sending
@@ -115,7 +115,6 @@ class NtripClient(object):
         response_size_bytes = 4096
         response_lines = self.socket.recv(response_size_bytes).decode('utf-8').split("\r\n")
         check_connection_response(response_lines[0])
-
 
     def get_ephemeris_loop(self):
         """

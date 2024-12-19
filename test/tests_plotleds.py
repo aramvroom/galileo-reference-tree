@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from gnss_monitor.plotleds import *
+
 
 class TestLedPlot(unittest.TestCase):
 
@@ -18,7 +20,8 @@ class TestLedPlot(unittest.TestCase):
                 self.b = b
 
         # Mock the getPixelColorRGB function to return red and blue alternating
-        self.mock_strip.getPixelColorRGB.side_effect = lambda idx: MockRGB(255, 0, 0) if idx % 2 == 0 else MockRGB(0, 0, 255)
+        self.mock_strip.getPixelColorRGB.side_effect = \
+            lambda idx: MockRGB(255, 0, 0) if idx % 2 == 0 else MockRGB(0, 0, 255)
 
         self.led_plot = LedPlot(width=10, strip=self.mock_strip)
 
@@ -56,16 +59,17 @@ class TestLedPlot(unittest.TestCase):
 
         # Ensure colors are set correctly for even and odd LEDs
         expected_calls = [
-            [1, 0, 0, 1],  # Bright red
-            [0, 0, 1, 1]   # Bright blue
-        ] * (self.mock_strip.numPixels() // 2)
+                             [1, 0, 0, 1],  # Bright red
+                             [0, 0, 1, 1]  # Bright blue
+                         ] * (self.mock_strip.numPixels() // 2)
         actual_calls = [call[0] for call in mock_set_color.call_args_list]
-        rgb_alpha_values =  [call[1] for call in actual_calls]
+        rgb_alpha_values = [call[1] for call in actual_calls]
         self.assertListEqual(rgb_alpha_values, expected_calls)
 
         # Verify the plot title
         updated_title = self.led_plot.ax.get_title()
         self.assertIn('Latest update', updated_title)
+
 
 if __name__ == "__main__":
     unittest.main()

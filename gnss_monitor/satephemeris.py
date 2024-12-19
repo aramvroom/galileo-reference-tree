@@ -2,12 +2,26 @@ import datetime
 from math import pi, sqrt, sin, atan2, cos, floor, ceil
 
 from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
+from astropy.time import Time
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
+
 from gnss_monitor import constants
-from astropy.time import Time
+
 
 def correct_wn_for_rollover(wn):
+    """
+        Corrects a week number for rollovers caused by the limited range of the GPS WN field.
+
+        This function adjusts the given week number such that it is within the nearest rollover of the current week number
+
+        Parameters:
+        wn (int): The input week number that needs to be corrected.
+
+        Returns:
+        int
+            The corrected GPS week number accounting for any rollovers.
+    """
     # Get current week number
     gps_time_now = Time(datetime.datetime.now(datetime.UTC), format='datetime').to_value('gps')
     wn_now = floor(gps_time_now / constants.SEC_IN_WEEK)
@@ -26,8 +40,50 @@ def correct_wn_for_rollover(wn):
 
     return wn_corrected
 
+
 class SatEphemeris(object):
+    """
+    Represents satellite ephemeris data, storing necessary orbital and clock parameters for
+    position and velocity propagation.
+
+    The SatEphemeris class encapsulates satellite orbital data and methods for propagating satellite
+    positions using ephemeris or Two-Line Element (TLE) sets. It supports both types of data inputs
+    and provides functionality to compute satellite positions in the Earth-Centered, Earth-Fixed (ECEF)
+    coordinate system at given times.
+
+    Attributes:
+        gst (int): GPS system time in seconds.
+        prn (int): Pseudo-random noise (PRN) identifier for the satellite.
+        signalHealth (int): Signal health status; defaults to -1 for unknown.
+        dataValidity (int): Data validity flag.
+        wn (int): GPS week number.
+        iodNav (int): Issue of Data for Navigation.
+        iDot (float): Rate of change of inclination in radians/second.
+        toc (int): Time of clock, expressed in seconds.
+        af2 (float): Clock drift rate.
+        af1 (float): Clock drift.
+        af0 (float): Clock bias.
+        crs (float): Sine harmonic correction to orbital radius.
+        deltaN (float): Mean motion difference in radians/second.
+        m0 (float): Mean anomaly at reference time in radians.
+        cuc (float): Cosine harmonic correction to argument of latitude.
+        ecc (float): Eccentricity.
+        cus (float): Sine harmonic correction to argument of latitude.
+        a (float): Semi-major axis.
+        toe (int): Time of ephemeris, expressed in seconds.
+        cic (float): Cosine harmonic correction to angle of inclination.
+        Omega0 (float): Longitude of ascending node of orbit plane in radians.
+        cis (float): Sine harmonic correction to angle of inclination.
+        i0 (float): Inclination at reference time in radians.
+        crc (float): Cosine harmonic correction to orbital radius.
+        omega (float): Argument of perigee in radians.
+        OmegaDot (float): Rate of change of right ascension of ascending node in radians/second.
+        tle (EarthSatellite): A Two-Line Element set representing the satellite.
+    """
     def __init__(self):
+        """
+        Initialization method for the SatEphemeris class
+        """
         self.gst = 0
         self.prn = 0
         self.signalHealth = -1  # Unknown signal health
@@ -57,6 +113,18 @@ class SatEphemeris(object):
         self.tle: EarthSatellite = None
 
     def map_to_ephemeris(self, rtcm):
+        """
+        Maps the provided RTCM object to ephemeris parameters by extracting and transforming
+        data fields. It processes various orbital and clock correction parameters, as well as
+        signal health and data validity.
+
+        Arguments:
+            rtcm (RTCM): An RTCM object containing fields required for ephemeris mapping.
+
+        Raises:
+            No exceptions are explicitly raised by this function.
+
+        """
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
         self.prn = rtcm.DF252
         self.signalHealth = rtcm.DF287
@@ -85,6 +153,25 @@ class SatEphemeris(object):
         self.OmegaDot = rtcm.DF311 * pi
 
     def propagate(self, wn, tow):
+        """
+        Propagates the satellite's position and velocity based on available navigation data.
+
+        This method determines the correct propagation approach based on whether the
+        satellite has Two-Line Element (TLE) data or ephemeris data. If TLE data exists
+        and no ephemeris is available, it uses TLE propagation. Otherwise, if ephemeris data is
+        available, it propagates using ephemeris. If neither data is present, a runtime
+        exception is raised.
+
+        Parameters:
+            wn (int): GPS week number to propagate to
+            tow (float): Time of week in seconds to propagate to
+
+        Returns:
+            Any: Results of the propagation, dependent on the method used (TLE or ephemeris).
+
+        Raises:
+            RuntimeError: Raised when no data (TLE or ephemeris) is available for propagation.
+        """
         if self.wn == 0 and self.tle is not None:
             return self.propagate_tle(wn, tow)
         elif self.wn > 0:
@@ -92,8 +179,23 @@ class SatEphemeris(object):
         else:
             raise RuntimeError("Attempted to propagate satellite without ephemeris or TLE")
 
-
     def propagate_tle(self, wn, tow):
+        """
+        Propagates a TLE (Two-Line Element set) for a satellite to compute its position in ECEF
+        (Earth-Centered Earth-Fixed) coordinates.
+
+        This function takes a GPS week number and time of week to determine the satellite's position
+        at the specified time by propagating its TLE. The position is returned in the ECEF coordinate
+        frame, expressed in meters.
+
+        Parameters:
+            wn (int): GPS week number.
+            tow (float): Time of week in seconds.
+
+        Returns:
+            tuple[float, float, float]: The (x, y, z) position of the satellite in ECEF coordinates,
+                given in meters.
+        """
         # Initialize timescale object
         ts = load.timescale()
 
@@ -122,8 +224,24 @@ class SatEphemeris(object):
 
         return x_ecef, y_ecef, z_ecef
 
-
     def propagate_ephemeris(self, tow):
+        """
+        Propagates the orbital ephemeris to compute the satellite's position in the ECEF frame at a given time.
+
+        This method calculates the position of a satellite in the Earth-Centered, Earth-Fixed (ECEF) coordinate
+        system at a specified time of week (TOW) based on its ephemeris parameters. The calculations include
+        adjustments for relativistic and periodic effects.
+
+        Parameters:
+            tow (float): Time of week (TOW) in seconds for which the satellite's position is to be computed.
+
+        Returns:
+            tuple[float, float, float]
+                A tuple representing the computed ECEF coordinates (x, y, z) of the satellite in meters.
+
+        Raises
+            None
+        """
         tk = tow - self.toe
         if tk > constants.SEC_IN_WEEK / 2:
             tk -= constants.SEC_IN_WEEK
@@ -156,9 +274,21 @@ class SatEphemeris(object):
         x = x1 * cos(Omega) - y1 * cos(i) * sin(Omega)
         y = x1 * sin(Omega) + y1 * cos(i) * cos(Omega)
         z = y1 * sin(i)
-        return x,y,z
+        return x, y, z
 
     def getEccentricAnomaly(self, mean_anomaly):
+        """
+        Calculate the eccentric anomaly for a given mean anomaly using Newton-Raphson
+        iteration method.
+
+        Args:
+            mean_anomaly (float): The mean anomaly, expressed in radians, for which
+            the eccentric anomaly will be calculated.
+
+        Returns:
+            float: The calculated eccentric anomaly corresponding to the given mean
+            anomaly.
+        """
         nr_next = 0
         nr = 1
         iter_ctr = 1

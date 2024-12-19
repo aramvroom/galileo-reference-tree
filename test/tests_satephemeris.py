@@ -1,20 +1,20 @@
 import io
-import struct
 import unittest
 from math import pi
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-from astropy.time import Time
-from pyrtcm import RTCM_DATA_FIELDS, RTCMMessage
+from pyrtcm import RTCMMessage
 
 from gnss_monitor import constants
 from gnss_monitor.satephemeris import SatEphemeris, correct_wn_for_rollover
 from gnss_monitor.twolineelements import TwoLineElements
 
+
 class TestSatEphemeris(unittest.TestCase):
     def setUp(self):
         # One of the received Galileo ephemeris messages (ephemeris for 2024/12/15 12:30:00 UTC)
-        self.rtcm = RTCMMessage(payload=b'A`\x94\xa4Kk\xd5\xa8.\xe0\x00\x01\x9e\x00\xbfZ\xa0\x1a\xa8}\xe8\xd5B\xda\xd8\x13\x94\x00\xf5&`f\x92\xa8\x13\xfd\x10.\xef\xfe\xc6\xc9\xb3P\xbf\xfd\xc2u35\x90\xa6Q\x99\x93\xc8\xef\xfc~\xdf\xbb\xed\x00')
+        self.rtcm = RTCMMessage(
+            payload=b'A`\x94\xa4Kk\xd5\xa8.\xe0\x00\x01\x9e\x00\xbfZ\xa0\x1a\xa8}\xe8\xd5B\xda\xd8\x13\x94\x00\xf5&`f\x92\xa8\x13\xfd\x10.\xef\xfe\xc6\xc9\xb3P\xbf\xfd\xc2u35\x90\xa6Q\x99\x93\xc8\xef\xfc~\xdf\xbb\xed\x00')
 
     @patch("astropy.time.Time.to_value")
     def test_map_to_ephemeris(self, mock_to_value):
@@ -26,7 +26,7 @@ class TestSatEphemeris(unittest.TestCase):
         sat_ephemeris.map_to_ephemeris(self.rtcm)
 
         # Verify
-        self.assertEqual(sat_ephemeris.gst, self.rtcm.DF304 + self.rtcm.DF289 * constants.SEC_IN_WEEK )
+        self.assertEqual(sat_ephemeris.gst, self.rtcm.DF304 + self.rtcm.DF289 * constants.SEC_IN_WEEK)
         self.assertEqual(sat_ephemeris.prn, self.rtcm.DF252)
         self.assertEqual(sat_ephemeris.signalHealth, self.rtcm.DF287)
         self.assertEqual(sat_ephemeris.dataValidity, self.rtcm.DF288)
@@ -51,7 +51,6 @@ class TestSatEphemeris(unittest.TestCase):
         self.assertEqual(sat_ephemeris.omega, self.rtcm.DF310 * pi)
         self.assertEqual(sat_ephemeris.OmegaDot, self.rtcm.DF311 * pi)
 
-
     def test_get_eccentric_anomaly(self):
         # Prepare
         sat_ephemeris = SatEphemeris()
@@ -68,10 +67,10 @@ class TestSatEphemeris(unittest.TestCase):
         # Prepare
         sat_ephemeris = SatEphemeris()
         sat_ephemeris.map_to_ephemeris(self.rtcm)
-        expected_x, expected_y, expected_z = 417440.572,  18971103.221, 22713182.960    # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
+        expected_x, expected_y, expected_z = 417440.572, 18971103.221, 22713182.960  # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
 
         # Execute
-        x,y,z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe)
+        x, y, z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe)
 
         # Verify (within 2 meters)
         self.assertAlmostEqual(x, expected_x, delta=2)
@@ -82,10 +81,10 @@ class TestSatEphemeris(unittest.TestCase):
         # Prepare
         sat_ephemeris = SatEphemeris()
         sat_ephemeris.map_to_ephemeris(self.rtcm)
-        expected_x, expected_y, expected_z = -654659.021, 19786342.403, 22002213.080    # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
+        expected_x, expected_y, expected_z = -654659.021, 19786342.403, 22002213.080  # From JGX0OPSULT_20243491200_02D_05M_ORB.SP3
 
         # Execute (propagate to 10 minutes later)
-        x,y,z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe + 600)
+        x, y, z = sat_ephemeris.propagate(sat_ephemeris.wn, sat_ephemeris.toe + 600)
 
         # Verify (within 2 meters)
         self.assertAlmostEqual(x, expected_x, delta=2)
@@ -122,8 +121,8 @@ GSAT0211 (GALILEO 14),2016-030A,2024-12-15T22:14:03.283296,1.70473113,.0003845,5
         sat_ephemeris[1].map_to_ephemeris(self.rtcm)
 
         # Execute, by propagating both the TLE and the ephemeris
-        x,y,z = sat_ephemeris[1].propagate_ephemeris(sat_ephemeris[1].toe + 600)
-        x_tle,y_tle,z_tle = sat_ephemeris[1].propagate_tle(sat_ephemeris[1].wn, sat_ephemeris[1].toe + 600)
+        x, y, z = sat_ephemeris[1].propagate_ephemeris(sat_ephemeris[1].toe + 600)
+        x_tle, y_tle, z_tle = sat_ephemeris[1].propagate_tle(sat_ephemeris[1].wn, sat_ephemeris[1].toe + 600)
 
         # Verify, with a margin of 5km due to TLE inaccuracy
         self.assertAlmostEqual(x, x_tle, delta=5e3)
@@ -144,6 +143,7 @@ GSAT0211 (GALILEO 14),2016-030A,2024-12-15T22:14:03.283296,1.70473113,.0003845,5
 
         # Verify
         self.assertEqual(found_wn, expected_ephem_wn)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,13 +1,8 @@
-import unittest
 import datetime
-from time import sleep
+import unittest
 from unittest.mock import patch
 
 from gnss_monitor import constants
-from gnss_monitor.config import Ntrip
-from gnss_monitor.ntripclient import NtripClient
-from gnss_monitor.satephemeris import SatEphemeris
-from gnss_monitor.twolineelements import TwoLineElements
 from main import getCurrentToW
 
 
@@ -25,6 +20,7 @@ class TestMainFunctions(unittest.TestCase):
         # Verify
         self.assertEqual(found_wn, expected_wn)
         self.assertEqual(found_tow, expected_tow)
+
 
 if __name__ == '__main__':
     unittest.main()

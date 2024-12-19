@@ -1,4 +1,5 @@
 import unittest
+
 from gnss_monitor.transform import lla2ecef, ecef2enu, ecef2aer
 
 
@@ -13,7 +14,7 @@ class TestTransform(unittest.TestCase):
         x, y, z = lla2ecef(lat, lon, alt)
 
         # Verify
-        self.assertAlmostEqual(x, expected_x, delta=1)   # Expected values accurate to the meter
+        self.assertAlmostEqual(x, expected_x, delta=1)  # Expected values accurate to the meter
         self.assertAlmostEqual(y, expected_y, delta=1)
         self.assertAlmostEqual(z, expected_z, delta=1)
 
@@ -35,7 +36,7 @@ class TestTransform(unittest.TestCase):
         # Prepare
         ref_lat, ref_lon = 52.0, 4.0  # Reference point
         dx, dy, dz = 1000.0, 2000.0, 3000.0  # Offset in ECEF
-        expected_east, expected_north, expected_up = 1925.371626775511, 950.9555240773523, 3064.086762814848   # From Octave
+        expected_east, expected_north, expected_up = 1925.371626775511, 950.9555240773523, 3064.086762814848  # From Octave
 
         # Execute
         east, north, up = ecef2enu(dx, dy, dz, ref_lat, ref_lon)
@@ -44,6 +45,7 @@ class TestTransform(unittest.TestCase):
         self.assertAlmostEqual(east, expected_east)
         self.assertAlmostEqual(north, expected_north)
         self.assertAlmostEqual(up, expected_up)
+
 
 if __name__ == "__main__":
     unittest.main()

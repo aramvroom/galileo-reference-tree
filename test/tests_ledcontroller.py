@@ -1,10 +1,9 @@
 import unittest
 from unittest.mock import patch
-from warnings import catch_warnings
 
-from gnss_monitor.ledcontroller import *
 from gnss_monitor import constants
 from gnss_monitor.config import LEDs
+from gnss_monitor.ledcontroller import *
 from gnss_monitor.satephemeris import SatEphemeris
 
 
@@ -24,7 +23,6 @@ class TestLedController(unittest.TestCase):
         # Verify
         self.assertEqual(found_int, expected_int)
 
-
     def test_rotate_list_left(self):
         # Prepare
         list_before = [1, 2, 3]
@@ -37,7 +35,6 @@ class TestLedController(unittest.TestCase):
         # Verify
         self.assertEqual(found_list, expected_list_after)
 
-
     def test_rotate_list_right(self):
         # Prepare
         list_before = [1, 2, 3]
@@ -49,7 +46,6 @@ class TestLedController(unittest.TestCase):
 
         # Verify
         self.assertEqual(found_list, expected_list_after)
-
 
     def test_get_led_idx(self):
         # Prepare
@@ -65,7 +61,7 @@ class TestLedController(unittest.TestCase):
 
     def test_get_brightness(self):
         # Prepare
-        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev = [[0] * 2] * 1  # Initialize azimuth and elevation for 1 satellite
         azelev[0][1] = 45
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
         expected_brightness = 191
@@ -80,7 +76,7 @@ class TestLedController(unittest.TestCase):
         # Prepare
         config = LEDs
         config.satellites.min_elev_brightness = 0
-        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev = [[0] * 2] * 1  # Initialize azimuth and elevation for 1 satellite
         azelev[0][1] = -45
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, config)
         expected_brightness = 0
@@ -95,13 +91,13 @@ class TestLedController(unittest.TestCase):
         # Prepare
         signal_unhealthy = False
         sat_idx = 0
-        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev = [[0] * 2] * 1  # Initialize azimuth and elevation for 1 satellite
         azelev[sat_idx][1] = 90
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
         expected_color = LEDs.satellites.color_healthy
 
         # Execute
-        ledcontroller.set_sat_led(sat_idx,signal_unhealthy)
+        ledcontroller.set_sat_led(sat_idx, signal_unhealthy)
         found_color_rgb = ledcontroller.ledstrip.getPixelColorRGB(ledcontroller.get_led_idx(sat_idx))
 
         # Verify
@@ -111,13 +107,13 @@ class TestLedController(unittest.TestCase):
         # Prepare
         signal_unhealthy = True
         sat_idx = 0
-        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev = [[0] * 2] * 1  # Initialize azimuth and elevation for 1 satellite
         azelev[sat_idx][1] = 90
         ledcontroller = LedController(constants.MAX_SATS, [], azelev, LEDs)
         expected_color = LEDs.satellites.color_unhealthy
 
         # Execute
-        ledcontroller.set_sat_led(sat_idx,signal_unhealthy)
+        ledcontroller.set_sat_led(sat_idx, signal_unhealthy)
         found_color_rgb = ledcontroller.ledstrip.getPixelColorRGB(ledcontroller.get_led_idx(sat_idx))
 
         # Verify
@@ -128,11 +124,11 @@ class TestLedController(unittest.TestCase):
         led_indices = (5, 6, 7, 8, 9)
         ledcontroller = LedController(constants.MAX_SATS, [], [], LEDs)
         early_late_color = tuple([round(i * LEDs.satellites.brightness_early_late_plane) for i in
-                                 LEDs.satellites.color_plane])
+                                  LEDs.satellites.color_plane])
         prompt_color = LEDs.satellites.color_plane
 
-        expected_color_5 = (0,0,0)
-        expected_color_6 = (0,0,0)
+        expected_color_5 = (0, 0, 0)
+        expected_color_6 = (0, 0, 0)
         expected_color_7 = early_late_color
         expected_color_8 = prompt_color
         expected_color_9 = early_late_color
@@ -158,10 +154,10 @@ class TestLedController(unittest.TestCase):
         # Prepare
         ephem = SatEphemeris
         ephem.signalHealth = 0
-        azelev = [[0]*2]*1  # Initialize azimuth and elevation for 1 satellite
+        azelev = [[0] * 2] * 1  # Initialize azimuth and elevation for 1 satellite
         azelev[0][1] = 90
         max_sats = 1
-        expected_color = LEDs.satellites.color_healthy      # Brightness is max because 90 degree elevation
+        expected_color = LEDs.satellites.color_healthy  # Brightness is max because 90 degree elevation
 
         ledcontroller = LedController(max_sats, [ephem], azelev, LEDs)
 
@@ -172,9 +168,6 @@ class TestLedController(unittest.TestCase):
 
         # Verify
         self.assertEqual((found_pixel_color.r, found_pixel_color.g, found_pixel_color.b), expected_color)
-
-
-
 
 
 if __name__ == '__main__':

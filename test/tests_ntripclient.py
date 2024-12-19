@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from gnss_monitor.ntripclient import *
 
+
 class TestCheckConnectionResponse(unittest.TestCase):
     @patch("sys.stderr.write")
     @patch("sys.exit")
@@ -78,7 +79,8 @@ class TestNtripClient(unittest.TestCase):
 
         # Verify
         self.assertIn(f"GET /{self.ntrip_config.mountpoint} HTTP/1.1", request)
-        self.assertIn(f"User-Agent: NTRIP {self.ntrip_config.software_name}/{self.ntrip_config.software_version}", request)
+        self.assertIn(f"User-Agent: NTRIP "
+                      f"{self.ntrip_config.software_name}/{self.ntrip_config.software_version}", request)
         self.assertIn("Authorization: Basic", request)
         self.assertIn(f"Host: {self.ntrip_config.address}:{self.ntrip_config.port}", request)
         self.assertIn("Ntrip-Version: Ntrip/2.0", request)
@@ -125,6 +127,7 @@ class TestNtripClient(unittest.TestCase):
         # Execute and Verify
         with self.assertRaises(socket.error):
             NtripClient(self.ephem, self.ntrip_config)
+
 
 if __name__ == '__main__':
     unittest.main()

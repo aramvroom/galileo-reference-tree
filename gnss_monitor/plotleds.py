@@ -25,6 +25,7 @@ class LedPlot(object):
         fig (object): The `matplotlib` figure object for the visualization.
         ax (object): The `matplotlib` axes object for the visualization grid.
     """
+
     def __init__(self, width, strip):
         """
         This class initializes a graphical representation of a grid of LEDs using matplotlib. The
@@ -70,7 +71,6 @@ class LedPlot(object):
 
         Raises:
             Any exceptions related to matplotlib rendering or datetime processing during the update process.
-
         """
         plt.show()
         for ledIdx in range(self.numleds):

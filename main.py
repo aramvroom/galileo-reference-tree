@@ -20,6 +20,7 @@ from gnss_monitor.twolineelements import TwoLineElements
 
 TIME_START = datetime.datetime.now(datetime.UTC)
 
+
 def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1, verbose=False):
     """
     Continuously propagates ephemeris data and computes the satellites' azimuth and
@@ -61,7 +62,7 @@ def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1,
 
                 # Convert to azimuth, elevation and range
                 az, elev, r = ecef2aer(x, y, z, location.latitude_deg, location.longitude_deg,
-                                           location.altitude_m)
+                                       location.altitude_m)
                 all_azelev[idx] = [az, elev]
                 if verbose:
                     print('Sat', eph.prn, 'az', az, 'elev', elev, 'r', r)
@@ -80,7 +81,7 @@ def get_utc_now():
     return datetime.datetime.now(datetime.UTC)
 
 
-def getCurrentToW(simulation_speed = 1):
+def getCurrentToW(simulation_speed=1):
     """
         Calculates the current GPS Week Number (WN) and Time of Week (ToW) based on
         the simulation speed and the current system UTC time. This utilizes a
@@ -123,20 +124,25 @@ if __name__ == '__main__':
         tle.set_tle(ephemeris)
 
         # Create RTCM retrieval loop
-        client = NtripClient(ephemeris, azelev, config.ntrip)
+        client = NtripClient(ephemeris, config.ntrip)
         running_threads.append(threading.Thread(target=client.get_ephemeris_loop))
 
         # Create propagation loop
-        running_threads.append(threading.Thread(target=propagate_all, args=[ephemeris, azelev, config.location, config.simulation_speed, config.verbose]))
+        running_threads.append(threading.Thread(target=propagate_all,
+                                                args=[ephemeris, azelev, config.location, config.simulation_speed,
+                                                      config.verbose]))
 
         # Create LED update loop for satellites
         ledController = LedController(constants.MAX_SATS, ephemeris, azelev, config.leds)
         running_threads.append(threading.Thread(target=ledController.update_leds))
 
         # Create LED update loop for orbital planes
-        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a]))
-        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_b]))
-        running_threads.append(threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_c]))
+        running_threads.append(
+            threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_a]))
+        running_threads.append(
+            threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_b]))
+        running_threads.append(
+            threading.Thread(target=ledController.show_plane, args=[config.leds.satellites.orbit_plane_c]))
 
         # Start all threads
         for thread in running_threads:
@@ -153,4 +159,3 @@ if __name__ == '__main__':
 
     finally:
         [thread.join() for thread in running_threads]
-

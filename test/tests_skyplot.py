@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from gnss_monitor.skyplot import *  # Assuming SkyPlot is in a file named sky_plot.py
+
+from gnss_monitor.skyplot import *
+
 
 class TestSkyPlot(unittest.TestCase):
 
@@ -81,6 +83,7 @@ class TestSkyPlot(unittest.TestCase):
         self.assertEqual(plot.annot[1].xy, [azelev[1][0] / 180 * pi, azelev[1][1]])
         self.assertEqual(plot.annot[2].xy, (default_coords[0], default_coords[1]))
         self.assertEqual(plot.annot[3].xy, [azelev[3][0] / 180 * pi, azelev[3][1]])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,6 +6,7 @@ from rpi_ws281x import PixelStrip, Color
 
 from gnss_monitor.config import LEDs
 
+
 def strip_type_to_int(strip_type: str):
     """
     Converts a given strip type string to its corresponding integer value.
@@ -42,6 +43,7 @@ def strip_type_to_int(strip_type: str):
                         "SK6812W_STRIP": 0x18081000}
     return strip_dictionary[strip_type]
 
+
 def rotate_list(l, n):
     """
         Cyclically rotates the elements of a list left by a specified number of positions.
@@ -74,6 +76,7 @@ class LedController(object):
         prn_to_led_map (dict): Maps satellite IDs to LED indices.
         ledstrip: The initialized LED strip object ready for control.
     """
+
     def __init__(self, max_sats, ephemeris, azelev, led_config: LEDs):
         """
         Initializes the LedController
@@ -96,7 +99,8 @@ class LedController(object):
         self.config = led_config
 
         # Create dictionary to map PRN to LED indices
-        self.prn_to_led_map = {led_config.satellites.map_prns[i]: led_config.satellites.map_leds[i] for i in range(len(led_config.satellites.map_prns))}
+        self.prn_to_led_map = {led_config.satellites.map_prns[i]: led_config.satellites.map_leds[i] for i in
+                               range(len(led_config.satellites.map_prns))}
 
         # Create LED strip
         strip = PixelStrip(led_config.general.led_count, led_config.general.gpio_pin,
@@ -144,7 +148,7 @@ class LedController(object):
         """
         elev = self.azelev[sat_idx][1]
 
-        a = (self.config.satellites.max_elev_brightness -  self.config.satellites.min_elev_brightness) / \
+        a = (self.config.satellites.max_elev_brightness - self.config.satellites.min_elev_brightness) / \
             (self.config.satellites.max_elev - self.config.satellites.min_elev)
         b = self.config.satellites.min_elev_brightness
 
@@ -189,7 +193,6 @@ class LedController(object):
         if led_idx >= 0:
             self.ledstrip.setPixelColor(led_idx, color)
 
-
     def show_plane(self, led_indices):
         """
         Updates and controls the display of LED patterns representing an orbital plane
@@ -202,10 +205,11 @@ class LedController(object):
                                      to be used for the plane effect.
         """
         # Only keep the LED indices which are not already satellites
-        led_indices =  [x for x in led_indices if x not in self.config.satellites.map_leds]
+        led_indices = [x for x in led_indices if x not in self.config.satellites.map_leds]
 
         mid_color = Color(*self.config.satellites.color_plane)
-        color_with_brightness = [round(i * self.config.satellites.brightness_early_late_plane) for i in self.config.satellites.color_plane]
+        color_with_brightness = [round(i * self.config.satellites.brightness_early_late_plane) for i in
+                                 self.config.satellites.color_plane]
         early_late_color = Color(*color_with_brightness)
         reset_color = Color(0, 0, 0)
 

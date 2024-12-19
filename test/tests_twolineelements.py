@@ -1,11 +1,9 @@
-import unittest
-from unittest.mock import patch, MagicMock, mock_open
-import warnings
 import io
+import unittest
+from unittest.mock import patch
 
 from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.twolineelements import TwoLineElements
-from main import getCurrentToW
 
 
 class TestTwoLineElements(unittest.TestCase):
@@ -110,6 +108,7 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         # Assertions
         self.assertEqual(self.mock_ephemeris[0].tle.name, 'GSAT0101 (GALILEO-PFM)')  # Known satellite
         self.assertEqual(self.mock_ephemeris[1].tle, None)  # Unknown satellite skipped
+
 
 if __name__ == '__main__':
     unittest.main()
