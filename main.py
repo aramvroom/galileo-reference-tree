@@ -10,12 +10,12 @@ from dataclass_binder import Binder
 
 from gnss_monitor import constants
 from gnss_monitor.config import Config, Location
+from gnss_monitor.ledcontroller import LedController
 from gnss_monitor.ntripclient import NtripClient
 from gnss_monitor.plotleds import LedPlot
 from gnss_monitor.satephemeris import SatEphemeris
 from gnss_monitor.skyplot import SkyPlot
-from gnss_monitor.transform import lla2ecef, ecef2aer
-from gnss_monitor.ledcontroller import LedController
+from gnss_monitor.transform import ecef2aer
 from gnss_monitor.twolineelements import TwoLineElements
 
 TIME_START = datetime.datetime.now(datetime.UTC)
@@ -92,8 +92,6 @@ def getCurrentToW(simulation_speed=1):
 
 
 if __name__ == '__main__':
-    outputFile = ''
-    headerFile = False
 
     # Read the configuration file
     config = Binder(Config).parse_toml("./config.toml")

@@ -2,7 +2,7 @@ astropy==6.0.1
 dataclass_binder==0.3.4
 matplotlib==3.9.3
 pyrtcm==1.1.1
-rpi_ws281x==1.1.3
+rpi_ws281x==5.0.0
 skyfield~=1.49
 requests~=2.32.3
 bs4~=0.0.2
