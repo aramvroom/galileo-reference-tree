@@ -5,22 +5,22 @@ from gnss_monitor import constants
 
 def lla2ecef(lat, lon, alt):
     """
-        Converts geodetic coordinates (latitude, longitude, and altitude) to
-        Earth-Centered, Earth-Fixed (ECEF) coordinates.
+    Converts geodetic coordinates (latitude, longitude, and altitude) to
+    Earth-Centered, Earth-Fixed (ECEF) coordinates.
 
-        This function transforms latitude, longitude, and altitude values based on
-        the WGS84 ellipsoid parameters into the Cartesian ECEF coordinates. It
-        takes into account the flattening of the Earth by using the ellipsoidal
-        model defined by constants such as the semi-major axis and first
-        eccentricity squared. Source: https://github.com/sglvladi/MATLAB/blob/master/ecef.py
+    This function transforms latitude, longitude, and altitude values based on
+    the WGS84 ellipsoid parameters into the Cartesian ECEF coordinates. It
+    takes into account the flattening of the Earth by using the ellipsoidal
+    model defined by constants such as the semi-major axis and first
+    eccentricity squared. Source: https://github.com/sglvladi/MATLAB/blob/master/ecef.py
 
-        Parameters:
-            lat (float): The latitude in degrees.
-            lon (float): The longitude in degrees.
-            alt (float): The altitude in meters above the WGS84 ellipsoid.
+    Parameters:
+        lat (float): The latitude in degrees.
+        lon (float): The longitude in degrees.
+        alt (float): The altitude in meters above the WGS84 ellipsoid.
 
-        Returns:
-            tuple: A tuple containing the ECEF coordinates (x, y, z) in meters.
+    Returns:
+        tuple[float, float, float] The ECEF coordinates (x, y, z) in meters.
     """
     lat *= constants.DEG_TO_RAD
     lon *= constants.DEG_TO_RAD
@@ -34,23 +34,20 @@ def lla2ecef(lat, lon, alt):
 
 def ecef2aer(x, y, z, lat0, lon0, alt0):
     """
-        Converts Earth-Centered Earth-Fixed (ECEF) coordinates to Azimuth, Elevation,
-        and Range (AER) coordinates with respect to a fixed observation point defined
-        by latitude, longitude, and altitude.
+    Converts Earth-Centered Earth-Fixed (ECEF) coordinates to Azimuth, Elevation,
+    and Range (AER) coordinates with respect to a fixed observation point defined
+    by latitude, longitude, and altitude.
 
-        Parameters:
-            x (float): X-coordinate of the target in ECEF (meters).
-            y (float): Y-coordinate of the target in ECEF (meters).
-            z (float): Z-coordinate of the target in ECEF (meters).
-            lat0 (float): Latitude of the observation point in degrees.
-            lon0 (float): Longitude of the observation point in degrees.
-            alt0 (float): Altitude of the observation point in meters.
+    Parameters:
+        x (float): X-coordinate of the target in ECEF (meters).
+        y (float): Y-coordinate of the target in ECEF (meters).
+        z (float): Z-coordinate of the target in ECEF (meters).
+        lat0 (float): Latitude of the observation point in degrees.
+        lon0 (float): Longitude of the observation point in degrees.
+        alt0 (float): Altitude of the observation point in meters.
 
-        Returns:
-            tuple[float, float, float]: The (azimuth, elevation, range) in degrees and meters respectively
-
-        Raises:
-            ValueError: If invalid coordinate or observation point values are provided.
+    Returns:
+        tuple[float, float, float]: The (azimuth, elevation, range) in degrees and meters respectively.
     """
     x0, y0, z0 = lla2ecef(lat0, lon0, alt0)
     e, n, u = ecef2enu(x - x0, y - y0, z - z0, lat0, lon0)

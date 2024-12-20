@@ -13,32 +13,32 @@ def check_connection_response(line):
     Check the given response line to determine if the connection was successful.
 
     Checks if the response indicates a successful connection. If the connection
-    is not successful and contains certain error information, writes relevant
-    error messages to the standard error output.
+    is not successful, it generates a RuntimeError with the details
 
     Parameters:
         line (str): The response line to be examined.
 
     Raises:
-        Writes to the standard error if the line does not indicate a successful
-        connection or contains mount point-related error information.
+        RuntimeError:
+            If the line does not indicate a successful connection
     """
     # These are the expected statuses
     if "ICY 200 OK" in line or "HTTP/1.0 200 OK" in line or "HTTP/1.1 200 OK" in line:
         return
 
     # If there was no OK, throw an error with the line
-    sys.stderr.write(line + "\n")
+    error_string = line + "\n"
 
     # Also return human-readable error in case the mount point isn't found
     if "SOURCETABLE" in line:
-        sys.stderr.write("Mount point does not exist\n")
+        error_string += "Could not connect to mountpoint\n"
+
+    raise RuntimeError(error_string)
 
 
 class NtripClient(object):
     """
-    Represents a client for managing ephemeris data and NTRIP configuration,
-    facilitating connection to a network caster/server. This class handles
+    Represents a client for connecting to a network caster/server. This class handles
     the setup, communication, and parsing of satellite data through the NTRIP
     protocol, ensuring that ephemeris data is updated as new information is
     received.
@@ -48,16 +48,13 @@ class NtripClient(object):
             store RTCM data received from the server.
         config (Ntrip config object): An object containing the NTRIP configuration settings
             required for establishing a connection with the server.
-        socket (socket): A socket object used to manage the
-            connection with the NTRIP caster/server. Initially set to None.
+        socket (socket): A socket object used to connect with the NTRIP caster/server.
+        Initially set to None.
     """
 
     def __init__(self, ephem, ntrip_config: Ntrip):
         """
-
-        Represents a client for handling ephemeris data and NTRIP configuration
-        while connecting to a network GPS server. This class manages the ephem and
-        NTRIP configuration, as well as the connection socket.
+        Initialization of the NtripClient.
 
         Parameters:
             ephem (List[SatEphemeris]): Array of SatEphemeris objects to save the RTCM data to
@@ -73,7 +70,7 @@ class NtripClient(object):
         """
         Constructs and returns the mount point request formatted as per the NTRIP protocol.
 
-        This method creates an HTTP-like request string for accessing a specific mount
+        This method creates an HTTP request string for accessing a specific mount
         point on an NTRIP caster. The request includes user authentication encoded in
         Base64, client information, and optional headers depending on the configuration
         specified. The resulting request is returned as a byte object to be sent to the
@@ -81,9 +78,6 @@ class NtripClient(object):
 
         Returns:
             bytes: The constructed mount point request encoded in ASCII format.
-
-        Raises:
-            None
         """
         user_name_base64 = base64.b64encode(bytes(self.config.username_password, 'utf-8')).decode("utf-8")
         client_name = "NTRIP {0}/{1}".format(self.config.software_name, self.config.software_version)
@@ -100,12 +94,6 @@ class NtripClient(object):
         """
         Connects to the server and establishes a connection with the mount point. This involves creating a socket, sending
         a request to the server, and parsing the server's response to verify a successful connection.
-
-        Returns:
-            None
-
-        Raises:
-            Any error that might occur during socket connection, sending the request, or response validation.
         """
         # Set up a connection with the mount point
         self.socket = socket.create_connection((self.config.address, self.config.port))
@@ -124,14 +112,6 @@ class NtripClient(object):
         checks if the message corresponds to a Galileo Ephemeris type, retrieves
         necessary information such as the satellite ID and Galileo System Time (GST),
         and updates the ephemeris data for the satellite if newer information is received.
-
-        Raises:
-            An exception may be raised from the RTCM reader if parsing errors occur or
-            if the connected socket fails.
-
-        Returns:
-            None: This function does not return any value and instead updates the
-            ephemeris data structure in place.
         """
         # Create the RTCM Reader using the connected socket
         reader = pyrtcm.RTCMReader(self.socket, quitonerror=2)

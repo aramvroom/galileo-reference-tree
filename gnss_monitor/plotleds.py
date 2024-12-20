@@ -10,8 +10,8 @@ class LedPlot(object):
     Visualization class to render a graphical representation of the LED strip.
 
     The purpose of this class is to create a real-time visualization of the state of an
-    LED strip. The visual output is rendered using `matplotlib`. It is structured into a grid where
-    each LED is represented as a dot, and its color and brightness correspond to its physical state.
+    LED strip. It is structured into a grid where each LED is represented as a dot,
+    and its color and brightness correspond to its physical state.
 
     Attributes:
         width (int): The number of LEDs per row in the grid representation.
@@ -31,8 +31,7 @@ class LedPlot(object):
         This class initializes a graphical representation of a grid of LEDs using matplotlib. The
         LEDs are arranged in a 2D grid based on the given width and the total number of LEDs in
         the provided LED strip. Each LED is displayed as a dot, and its index is annotated on the
-        plot. The plot displays the LEDs with specific configurations for the layout
-        (limits, background color, tick labels, etc.).
+        plot.
 
         Parameters:
             width (int): The width of the LED grid (number of columns).
@@ -68,9 +67,6 @@ class LedPlot(object):
     def update_plot(self):
         """
         Updates the LED plot with the current RGB color and brightness values and refreshes the plot visualization.
-
-        Raises:
-            Any exceptions related to matplotlib rendering or datetime processing during the update process.
         """
         plt.show()
         for ledIdx in range(self.numleds):

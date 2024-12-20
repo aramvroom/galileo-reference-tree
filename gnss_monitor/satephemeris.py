@@ -16,11 +16,10 @@ def correct_wn_for_rollover(wn):
         This function adjusts the given week number such that it is within the nearest rollover of the current week number
 
         Parameters:
-        wn (int): The input week number that needs to be corrected.
+            wn (int): The input week number that needs to be corrected.
 
         Returns:
-        int
-            The corrected GPS week number accounting for any rollovers.
+            int: The corrected GPS week number accounting for any rollovers.
     """
     # Get current week number
     gps_time_now = Time(datetime.datetime.now(datetime.UTC), format='datetime').to_value('gps')
@@ -47,9 +46,7 @@ class SatEphemeris(object):
     position and velocity propagation.
 
     The SatEphemeris class encapsulates satellite orbital data and methods for propagating satellite
-    positions using ephemeris or Two-Line Element (TLE) sets. It supports both types of data inputs
-    and provides functionality to compute satellite positions in the Earth-Centered, Earth-Fixed (ECEF)
-    coordinate system at given times.
+    positions using ephemeris or Two-Line Element (TLE) sets.
 
     Attributes:
         gst (int): GPS system time in seconds.
@@ -120,10 +117,6 @@ class SatEphemeris(object):
 
         Arguments:
             rtcm (RTCM): An RTCM object containing fields required for ephemeris mapping.
-
-        Raises:
-            No exceptions are explicitly raised by this function.
-
         """
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
         self.prn = rtcm.DF252
@@ -167,7 +160,8 @@ class SatEphemeris(object):
             tow (float): Time of week in seconds to propagate to
 
         Returns:
-            Any: Results of the propagation, dependent on the method used (TLE or ephemeris).
+            tuple[float, float, float]: The (x, y, z) position of the satellite in ECEF coordinates,
+                given in meters.
 
         Raises:
             RuntimeError: Raised when no data (TLE or ephemeris) is available for propagation.
@@ -229,18 +223,13 @@ class SatEphemeris(object):
         Propagates the orbital ephemeris to compute the satellite's position in the ECEF frame at a given time.
 
         This method calculates the position of a satellite in the Earth-Centered, Earth-Fixed (ECEF) coordinate
-        system at a specified time of week (TOW) based on its ephemeris parameters. The calculations include
-        adjustments for relativistic and periodic effects.
+        system at a specified time of week (TOW) based on its ephemeris parameters.
 
         Parameters:
             tow (float): Time of week (TOW) in seconds for which the satellite's position is to be computed.
 
         Returns:
-            tuple[float, float, float]
-                A tuple representing the computed ECEF coordinates (x, y, z) of the satellite in meters.
-
-        Raises
-            None
+            tuple[float, float, float]: The computed ECEF coordinates (x, y, z) of the satellite in meters.
         """
         tk = tow - self.toe
         if tk > constants.SEC_IN_WEEK / 2:
@@ -281,7 +270,7 @@ class SatEphemeris(object):
         Calculate the eccentric anomaly for a given mean anomaly using Newton-Raphson
         iteration method.
 
-        Args:
+        Parameters:
             mean_anomaly (float): The mean anomaly, expressed in radians, for which
             the eccentric anomaly will be calculated.
 

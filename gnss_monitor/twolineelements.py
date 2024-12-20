@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
 
+from gnss_monitor import constants
+
 
 class TwoLineElements(object):
     """
@@ -26,13 +28,12 @@ class TwoLineElements(object):
         or is outdated. Loaded data is used to create EarthSatellite objects and populate a mapping
         between GSAT identifiers and SVID values.
         """
-        max_days = 10.0  # download again once 7 days old
         name = 'galileo_tle.csv'  # custom filename, not 'gp.php'
 
         base = 'https://celestrak.org/NORAD/elements/gp.php'
         url = base + '?GROUP=galileo&FORMAT=csv'
 
-        if not load.exists(name) or load.days_old(name) >= max_days:
+        if not load.exists(name) or load.days_old(name) >= constants.TLE_MAX_AGE:
             load.download(url, filename=name)
 
         with load.open(name, mode='r') as f:
@@ -46,15 +47,15 @@ class TwoLineElements(object):
 
     def get_gsat_to_svid_map(self):
         """
-        Fetches the GSAT to SV ID mapping from the Galileo System Service Status website.
+        Fetches the GSAT to SV ID mapping from EUSPA's European GNSS Service Centre (GSC).
 
-        This function retrieves data from the specified URL about the Galileo constellation information.
+        This function retrieves data from the GSC about the Galileo constellation information.
         It parses the HTML response to extract the mapping of GSAT identifiers to their corresponding SV IDs.
         The extracted mapping is stored in the `gsat_to_svid_map` attribute as a dictionary, where keys represent
         GSAT identifiers (as strings) and values represent SVIDs (as integers).
 
         Raises:
-            requests.exceptions.RequestException: If there is an issue with making the HTTP request.
+            RequestException: If there is an issue with making the HTTP request.
             AttributeError: If expected HTML elements are not found in the response or parsed structure.
             ValueError: If SV IDs values cannot be correctly parsed to integers, or if data is improperly formatted.
         """
@@ -80,10 +81,6 @@ class TwoLineElements(object):
 
         Parameters:
             ephemeris (list[SatEphemeris]): A list containing satellite ephemeris data.
-
-        Raises:
-            KeyError: Raised internally if a satellite name cannot be found in the mapping. This triggers
-                a warning instead of propagating the error.
         """
         for sat in self.sats:
             gsat = sat.name[:8]

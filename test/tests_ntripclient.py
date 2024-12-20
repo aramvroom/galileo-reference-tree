@@ -20,25 +20,26 @@ class TestCheckConnectionResponse(unittest.TestCase):
     def test_check_connection_response_error(self, mock_stderr_write):
         # Test when response is an error
         # Execute
-        check_connection_response("HTTP/1.1 404 Not Found")
+        with self.assertRaises(RuntimeError) as thrown_error:
+            check_connection_response("HTTP/1.1 404 Not Found")
 
         # Verify
-        mock_stderr_write.assert_called_with("HTTP/1.1 404 Not Found\n")
+        self.assertEqual(str(thrown_error.exception), "HTTP/1.1 404 Not Found\n")
 
     @patch("sys.stderr.write")
     def test_check_connection_response_sourcetable(self, mock_stderr_write):
         # Test when SOURCETABLE is in the response
         # Execute
-        check_connection_response("SOURCETABLE")
+        with self.assertRaises(RuntimeError) as thrown_error:
+            check_connection_response("SOURCETABLE")
 
         # Verify
-        mock_stderr_write.assert_any_call("SOURCETABLE\n")
-        mock_stderr_write.assert_any_call("Mount point does not exist\n")
+        self.assertEqual(str(thrown_error.exception), "SOURCETABLE\nCould not connect to mountpoint\n")
 
 
 class TestNtripClient(unittest.TestCase):
     def setUp(self):
-        # Sample configuration for the NtripClient class
+        # Sample configuration
         self.ntrip_config = Ntrip(
             address="ntrip.test.server",
             port=2101,

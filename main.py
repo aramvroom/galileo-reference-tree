@@ -29,25 +29,16 @@ def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1,
     all_ephem and azimuth-elevation output arrays.
 
     Parameters:
-        all_ephem: List
-            A list of ephemeris data objects for satellites. Assumes a fixed length as defined
-            by constants.MAX_SATS.
-        all_azelev: List[List[float]]
-            A mutable list to store the resulting azimuth, elevation pairs for each satellite.
-        location: Location
-            A Location object which contains latitude, longitude, and altitude in degrees and
-            meters respectively.
-        simulation_speed: int, optional
-            Speed-up factor for the simulation's time progression. Default is 1.
-        verbose: bool, optional
-            If True, additional information about each satellite's azimuth, elevation, and
-            range is printed to the console. Default is False.
-
-    Returns:
-        None
-
-    Raises:
-        No exceptions explicitly raised by this method.
+        all_ephem (list[SatEphemeris]): A list of ephemeris data objects for satellites.
+            Assumes a fixed length as defined by constants.MAX_SATS.
+        all_azelev (list[list[float]]): A mutable list to store the resulting azimuth,
+            elevation pairs for each satellite.
+        location (Location): A Location object which contains latitude, longitude, and
+            altitude in degrees and meters respectively.
+        simulation_speed (int, optional): optional speed-up factor for the simulation's
+            time progression. Default is 1.
+        verbose (bool, optional): If True, additional information about each satellite's
+            azimuth, elevation, and range is printed to the console. Default is False.
     """
     # Start continuous loop
     while True:
@@ -73,29 +64,25 @@ def get_utc_now():
     """
     This function retrieves the current date and time in UTC. It exists in order to allow mocking
 
-    Returns
-    -------
-    datetime.datetime
-        Current date and time in UTC format.
+    Returns:
+        datetime.datetime: Current date and time in UTC format.
     """
     return datetime.datetime.now(datetime.UTC)
 
 
 def getCurrentToW(simulation_speed=1):
     """
-        Calculates the current GPS Week Number (WN) and Time of Week (ToW) based on
-        the simulation speed and the current system UTC time. This utilizes a
-        predefined start time `TIME_START` and converts the time to GPS format
-        for further computations.
+    Calculates the current GPS Week Number (WN) and Time of Week (ToW) based on
+    the simulation speed and the current system UTC time. This utilizes a
+    predefined start time `TIME_START` and converts the time to GPS format
+    for further computations.
 
-        Parameters:
-            simulation_speed (int | float): The speed multiplier to simulate GPS
-                                            time, where 1 represents real-time.
+    Parameters:
+        simulation_speed (int | float): The speed multiplier to simulate GPS
+            time, where 1 represents real-time.
 
-        Returns:
-            tuple: A tuple containing:
-                   - gps_wn (int): The current GPS Week Number.
-                   - gps_tow (float): The current Time of Week in seconds.
+    Returns:
+        tuple[float, float]: The (gps_wn, gps_tow) in weeks and seconds respectively
     """
     current_time = (get_utc_now() - TIME_START) * simulation_speed + TIME_START
     gps_time_now = Time(current_time, format='datetime').to_value('gps')

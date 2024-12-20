@@ -23,6 +23,11 @@ class TestLedController(unittest.TestCase):
         # Verify
         self.assertEqual(found_int, expected_int)
 
+    def test_strip_type_to_int_error(self):
+        # Execute
+        with self.assertRaises(KeyError):
+            strip_type_to_int(None)
+
     def test_rotate_list_left(self):
         # Prepare
         list_before = [1, 2, 3]

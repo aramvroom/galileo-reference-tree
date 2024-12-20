@@ -9,11 +9,10 @@ from gnss_monitor.config import LEDs
 
 def strip_type_to_int(strip_type: str):
     """
-    Converts a given strip type string to its corresponding integer value.
+    Converts a given strip type string to its corresponding integer value for the rpi_ws281x library.
 
     This function maps a string representation of an LED strip type to its associated
-    integer constant based on predefined mappings. The input string must match one
-    of the keys in the predefined dictionary, otherwise it will result in a KeyError.
+    integer constant based on predefined mappings.
 
     Parameters:
         strip_type (str): The string representation of the LED strip type. Must match one of the keys in the strip_dictionary.
@@ -22,8 +21,7 @@ def strip_type_to_int(strip_type: str):
         int: The corresponding integer value of the supplied strip type.
 
     Raises:
-        KeyError:
-            If the provided strip_type does not exist in the strip_dictionary.
+        KeyError: If the provided strip_type does not exist in the strip_dictionary.
     """
     strip_dictionary = {"SK6812_STRIP_RGBW": 0x18100800,
                         "SK6812_STRIP_RBGW": 0x18100008,
@@ -60,21 +58,19 @@ def rotate_list(l, n):
 
 class LedController(object):
     """
-    Controls and manages an LED strip for visualizing satellite tracking.
+    Controls and manages an LED strip for visualizing satellite positions.
 
-    This class provides methods to initialize and configure an LED strip for representing satellite information
-    such as position, elevation, and signal health. It maps satellites to specific LEDs, adjusts LED brightness
-    based on elevation, sets LED colors based on signal status, and animates patterns for representing satellite
-    orbital planes. The class operates with an internal mapping of satellites to LEDs and supports real-time
-    control of LED states.
+    This class provides methods to initialize and configure an LED strip for representing satellite position, visibility,
+    and signal health. It maps satellites to specific LEDs, adjusts LED brightness based on elevation, sets LED colors
+    based on signal status. It furthermore patterns for representing satellite orbital planes.
 
     Attributes:
         max_sats (int): The maximum number of satellites supported.
-        ephemeris (list[SatEphemeris]): Ephemeris data used for satellite information and signal health.
-        azelev: Azimuth and elevation data for satellite tracking.
-        config (LEDs): Configuration for LED properties and system settings.
+        ephemeris (list[SatEphemeris]): Ephemeris data used for computing satellite positions and retrieving signal health.
+        azelev (list[list[float]]): Azimuth and elevation data for satellite tracking.
+        config (LEDs config object): Configuration for LEDs
         prn_to_led_map (dict): Maps satellite IDs to LED indices.
-        ledstrip: The initialized LED strip object ready for control.
+        ledstrip: The initialized LED strip object
     """
 
     def __init__(self, max_sats, ephemeris, azelev, led_config: LEDs):
@@ -85,13 +81,10 @@ class LedController(object):
         given configuration parameters to control the lighting.
 
         Parameters:
-            max_sats: The maximum number of satellites supported by this configuration.
+            max_sats (int): The maximum number of satellites supported
             ephemeris (list[SatEphemeris]): Satellite ephemerides
-            azelev (list[list[float]): Azimuth and elevation data.
+            azelev (list[list[float]]): Azimuth and elevation data.
             led_config (LEDs config object): LED configuration details, including properties for mapping satellites and LED strip settings.
-
-        Raises:
-            None
         """
         self.max_sats = max_sats
         self.ephemeris = ephemeris
@@ -115,15 +108,13 @@ class LedController(object):
         Determines the LED index corresponding to a given satellite index.
 
         The function maps a satellite index to an LED index using the configured mapping.
-        If the mapping does not contain the satellite PRN, a default value of -1 is returned.
+        If the mapping does not contain the satellite ID, a default value of -1 is returned.
 
         Parameters:
-            sat_idx (int): The index of the satellite for which the LED index
-            is to be determined.
+            sat_idx (int): The index of the satellite for which the LED index is to be determined.
 
         Returns:
-            int: The mapped LED index corresponding to the satellite index.
-            If no mapping is found, returns -1.
+            int: The mapped LED index corresponding to the satellite index. If no mapping is found, returns -1.
         """
         sat_prn = sat_idx + 1
         try:
@@ -163,18 +154,14 @@ class LedController(object):
 
         The method evaluates the satellite's elevation against the minimum elevation
         threshold and assigns a LED color according to the signal health status if the
-        satellite is considered visible. It also adjusts the brightness of the LED based
-        on its computed brightness value and sets the LED color on the LED strip if the LED
-        index is valid.
+        satellite is considered visible. It also adjusts the LED brightness based on the
+        elevation.
 
         Parameters:
             sat_idx (int): The index of the satellite whose LED is to be set.
             signal_health (int): The signal health status of the satellite. Acceptable
                 values are 0 (healthy), -1 (unknown), and any other value representing
-                unhealthy status.
-
-        Raises:
-            No explicit errors are raised by this method.
+                an unhealthy status.
         """
         if self.azelev[sat_idx][1] < self.config.satellites.min_elev:
             led_color = [0, 0, 0]
@@ -189,16 +176,17 @@ class LedController(object):
         led_color_with_elev = [round(i * brightness) for i in led_color]
         color = Color(*led_color_with_elev)
         led_idx = self.get_led_idx(sat_idx)
-        # Catch the case where the LED index is not found
+
+        # Only continue if the LED index is found
         if led_idx >= 0:
             self.ledstrip.setPixelColor(led_idx, color)
 
     def show_plane(self, led_indices):
         """
-        Updates and controls the display of LED patterns representing an orbital plane
-        on an LED strip. The method ensures that the LEDs specified for satellites are
-        excluded from the operation and performs cyclic LED activation with a configured
-        colors and brightness. The sequence and timing are controlled also based on configuration settings.
+        Updates and controls the display of LED patterns representing an orbital plane.
+        The method ensures that the LEDs specified for satellites are excluded and performs
+        cyclic LED activation with a configured colors and brightness. The sequence and timing
+        are controlled based on configuration settings.
 
         Parameters:
             led_indices (list[int]): A list of indices corresponding to LEDs
@@ -231,14 +219,6 @@ class LedController(object):
         """
         Updates LED states for satellites based on their signal health status and displays the
         changes. This function iterates indefinitely, updating the LED strip at a fixed interval.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
         """
         for _ in itertools.count():
             for satIdx in range(self.max_sats):

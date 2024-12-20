@@ -7,7 +7,7 @@ from matplotlib.lines import Line2D
 
 class SkyPlot(object):
     """
-    Represents a sky plot visualization of satellites.
+    Represents a skyplot visualization of satellites.
 
     This class is designed to provide a sky plot representation of satellite data. It visualizes satellite positions
     on a polar graph based on their azimuth and elevation coordinates, with different colors indicating the signal health
@@ -22,6 +22,12 @@ class SkyPlot(object):
     """
 
     def __init__(self, max_sats):
+        """
+        Initializes a visualization object for satellite plotting on a polar map.
+
+        Parameters:
+            max_sats (int): Defines the maximum number of satellites that the plot will track.
+        """
         self.max_sats = max_sats
         self.annot = [[] for _ in range(max_sats)]
         self.sats_plot = [[] for _ in range(max_sats)]
@@ -42,23 +48,17 @@ class SkyPlot(object):
     def update_plot(self, ephemeris, azelev):
         """
         Updates the satellite plot annotations and visualization data based on the provided ephemeris and azimuth-elevation
-        information. This method adjusts the visibility, color, position, and textual annotations of satellite markers
+        data. This method adjusts the visibility, color, position, and textual annotations of satellite markers
         on the plot to reflect the current state of each satellite, depending on its visibility and signal health.
 
         Parameters:
             ephemeris (list[SatEphemeris]): A list where each element corresponds to an individual satellite's ephemeris data.
                 Each satellite's ephemeris object should contain a 'signalHealth' attribute that determines the state
-                of the satellite's signal (-1 for poor, 0 for healthy, other values for unhealthy).
+                of the satellite's signal (-1 for unknown, 0 for healthy, other values for unhealthy).
             azelev (list[list[float]]): A list of two-element lists which correspond to the azimuth and elevation data of the satellites.
                 Each sublist represents a satellite, with the first element being the azimuth (in degrees) and the second
                 being the elevation (in degrees). If a satellite list is empty or its elevation is negative, the satellite
                 is hidden in the plot.
-
-        Raises:
-            None
-
-        Returns:
-            None
         """
         plt.show()
         for satIdx in range(self.max_sats):
