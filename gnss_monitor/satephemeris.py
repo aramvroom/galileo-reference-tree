@@ -1,5 +1,5 @@
 import datetime
-from math import pi, sqrt, sin, atan2, cos, floor, ceil
+from math import pi, sqrt, sin, atan2, cos, floor, ceil, atan
 
 from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
 from astropy.time import Time
@@ -77,6 +77,7 @@ class SatEphemeris(object):
         OmegaDot (float): Rate of change of right ascension of ascending node in radians/second.
         tle (EarthSatellite): A Two-Line Element set representing the satellite.
     """
+
     def __init__(self):
         """
         Initialization method for the SatEphemeris class
@@ -223,6 +224,61 @@ class SatEphemeris(object):
         Propagates the orbital ephemeris to compute the satellite's position in the ECEF frame at a given time.
 
         This method calculates the position of a satellite in the Earth-Centered, Earth-Fixed (ECEF) coordinate
+        system at a specified time of week (TOW) based on its ephemeris parameters. Source:
+        Subirana, J., Hernandez-Pajares, M., Zornoza, J., European Space Agency, & Fletcher, K. (2013).
+        GNSS Data Processing Volume 1. ESA Communications.
+
+
+
+        Parameters:
+            tow (float): Time of week (TOW) in seconds for which the satellite's position is to be computed.
+
+        Returns:
+            tuple[float, float, float]: The computed ECEF coordinates (x, y, z) of the satellite in meters.
+        """
+        # Time from the ephemerides reference epoch
+        tk = tow - self.toe
+
+        # Update time difference in case of week rollover
+        if tk > constants.SEC_IN_WEEK / 2:
+            tk -= constants.SEC_IN_WEEK
+        elif tk < -constants.SEC_IN_WEEK / 2:
+            tk += constants.SEC_IN_WEEK
+
+        # Compute mean anomaly
+        Mk = self.m0 + (sqrt(constants.MU_EARTH) / sqrt(self.a ** 3) + self.deltaN) * tk
+
+        # Compute the eccentric anomaly
+        Ek = self.getEccentricAnomaly(Mk)
+
+        # Compute the true anomaly
+        vk = atan(sqrt(1 - self.ecc ** 2) * sin(Ek) / (cos(Ek) - self.ecc))
+
+        # Compute argument of latitude from the argument of perigee, true anomaly and the corrections
+        uk = self.omega + vk + self.cuc * cos(2 * (self.omega + vk)) + self.cus * sin(2 * (self.omega + vk))
+
+        # Compute radial distance, considering corrections
+        rk = self.a * (1 - self.ecc * cos(Ek)) + self.crc * cos(2 * (self.omega + vk)) + self.crs * sin(
+            2 * (self.omega + vk))
+
+        # Compute inclinations from the inclination at the reference time and the corrections
+        ik = self.i0 + self.iDot * tk + self.cic * cos(2 * (self.omega + vk)) + self.cis * sin(2 * (self.omega + vk))
+
+        # Compute longitude of the ascending node w.r.t Greenwich
+        Omega = self.Omega0 + (self.OmegaDot - constants.ROT_RATE_EARTH) * tk - constants.ROT_RATE_EARTH * self.toe
+
+        # Transform to ECEF coordinates
+        x = rk * cos(uk) * cos(Omega) - rk * sin(uk) * cos(ik) * sin(Omega)
+        y = rk * cos(uk) * sin(Omega) + rk * sin(uk) * cos(ik) * cos(Omega)
+        z = rk * sin(uk) * sin(ik)
+
+        return x, y, z
+
+    def propagate_ephemeris_old(self, tow):
+        """
+        Propagates the orbital ephemeris to compute the satellite's position in the ECEF frame at a given time.
+
+        This method calculates the position of a satellite in the Earth-Centered, Earth-Fixed (ECEF) coordinate
         system at a specified time of week (TOW) based on its ephemeris parameters.
 
         Parameters:
@@ -267,8 +323,7 @@ class SatEphemeris(object):
 
     def getEccentricAnomaly(self, mean_anomaly):
         """
-        Calculate the eccentric anomaly for a given mean anomaly using Newton-Raphson
-        iteration method.
+        Calculate the eccentric anomaly for a given mean anomaly
 
         Parameters:
             mean_anomaly (float): The mean anomaly, expressed in radians, for which
@@ -278,15 +333,7 @@ class SatEphemeris(object):
             float: The calculated eccentric anomaly corresponding to the given mean
             anomaly.
         """
-        nr_next = 0
-        nr = 1
-        iter_ctr = 1
-        while abs(nr_next - nr) > 1e-15 and iter_ctr < 200:
-            nr = nr_next
-            f = nr - self.ecc * sin(nr) - mean_anomaly
-            f1 = 1 - self.ecc * cos(nr)
-            f2 = self.ecc * sin(nr)
-            nr_next = nr - (f / (f1 - (f2 * f / 2 * f1)))
-            iter_ctr += 1
-        ek = nr_next
-        return ek
+        eccentric_anomaly = mean_anomaly  # Initial guess
+        for _ in range(20):  # Iterate to solve eccentric anomaly numerically
+            eccentric_anomaly = mean_anomaly + self.ecc * sin(eccentric_anomaly)
+        return eccentric_anomaly
