@@ -3,7 +3,7 @@ from math import sqrt, sin, cos, hypot, atan2, pi
 from gnss_monitor import constants
 
 
-def lla2ecef(lat, lon, alt):
+def llh2ecef(lat, lon, h):
     """
     Converts geodetic coordinates (latitude, longitude, and altitude) to
     Earth-Centered, Earth-Fixed (ECEF) coordinates.
@@ -12,12 +12,14 @@ def lla2ecef(lat, lon, alt):
     the WGS84 ellipsoid parameters into the Cartesian ECEF coordinates. It
     takes into account the flattening of the Earth by using the ellipsoidal
     model defined by constants such as the semi-major axis and first
-    eccentricity squared. Source: https://github.com/sglvladi/MATLAB/blob/master/ecef.py
+    eccentricity squared. Source: Subirana, J., Hernandez-Pajares, M., Zornoza, J.,
+    European Space Agency, & Fletcher, K. (2013). GNSS Data Processing Volume 1.
+    ESA Communications.
 
     Parameters:
         lat (float): The latitude in degrees.
         lon (float): The longitude in degrees.
-        alt (float): The altitude in meters above the WGS84 ellipsoid.
+        h (float): The height in meters above the WGS84 ellipsoid.
 
     Returns:
         tuple[float, float, float] The ECEF coordinates (x, y, z) in meters.
@@ -25,10 +27,10 @@ def lla2ecef(lat, lon, alt):
     lat *= constants.DEG_TO_RAD
     lon *= constants.DEG_TO_RAD
 
-    n = constants.WGS84_SEMI_MAJOR_AXIS / sqrt(1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED * sin(lat) * sin(lat))
-    x = (n + alt) * cos(lat) * cos(lon)
-    y = (n + alt) * cos(lat) * sin(lon)
-    z = ((1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED) * n + alt) * sin(lat)
+    n = constants.WGS84_SEMI_MAJOR_AXIS / sqrt(1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED * sin(lat) ** 2)
+    x = (n + h) * cos(lat) * cos(lon)
+    y = (n + h) * cos(lat) * sin(lon)
+    z = ((1 - constants.WGS84_FIRST_ECCENTRICITY_SQUARED) * n + h) * sin(lat)
     return x, y, z
 
 
@@ -49,7 +51,7 @@ def ecef2aer(x, y, z, lat0, lon0, alt0):
     Returns:
         tuple[float, float, float]: The (azimuth, elevation, range) in degrees and meters respectively.
     """
-    x0, y0, z0 = lla2ecef(lat0, lon0, alt0)
+    x0, y0, z0 = llh2ecef(lat0, lon0, alt0)
     e, n, u = ecef2enu(x - x0, y - y0, z - z0, lat0, lon0)
 
     r = hypot(e, n)

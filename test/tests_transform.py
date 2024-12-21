@@ -1,17 +1,17 @@
 import unittest
 
-from gnss_monitor.transform import lla2ecef, ecef2enu, ecef2aer
+from gnss_monitor.transform import llh2ecef, ecef2enu, ecef2aer
 
 
 class TestTransform(unittest.TestCase):
 
-    def test_lla2ecef(self):
+    def test_llh2ecef(self):
         # Prepare
         lat, lon, alt = 52.0, 4.0, 50.0
         expected_x, expected_y, expected_z = 3925406, 274491, 5002843
 
         # Execute
-        x, y, z = lla2ecef(lat, lon, alt)
+        x, y, z = llh2ecef(lat, lon, alt)
 
         # Verify
         self.assertAlmostEqual(x, expected_x, delta=1)  # Expected values accurate to the meter
@@ -20,7 +20,7 @@ class TestTransform(unittest.TestCase):
 
     def test_geodetic2aer(self):
         # Prepare
-        x, y, z = lla2ecef(52.0, 4.0, 50.0)  # Observer's location
+        x, y, z = llh2ecef(52.0, 4.0, 50.0)  # Observer's location
         target_lat, target_lon, target_alt = 53.0, 5.0, 100.0  # Target's location
         expected_az, expected_elev, expected_r = 211.7926184361850, -0.607305726367828, 130358.5598826873  # From Octave
 
