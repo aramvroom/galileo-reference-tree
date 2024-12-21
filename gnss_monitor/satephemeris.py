@@ -274,53 +274,6 @@ class SatEphemeris(object):
 
         return x, y, z
 
-    def propagate_ephemeris_old(self, tow):
-        """
-        Propagates the orbital ephemeris to compute the satellite's position in the ECEF frame at a given time.
-
-        This method calculates the position of a satellite in the Earth-Centered, Earth-Fixed (ECEF) coordinate
-        system at a specified time of week (TOW) based on its ephemeris parameters.
-
-        Parameters:
-            tow (float): Time of week (TOW) in seconds for which the satellite's position is to be computed.
-
-        Returns:
-            tuple[float, float, float]: The computed ECEF coordinates (x, y, z) of the satellite in meters.
-        """
-        tk = tow - self.toe
-        if tk > constants.SEC_IN_WEEK / 2:
-            tk -= constants.SEC_IN_WEEK
-        elif tk < -constants.SEC_IN_WEEK / 2:
-            tk += constants.SEC_IN_WEEK
-
-        n0 = sqrt(constants.MU_EARTH / pow(self.a, 3))
-        n = n0 + self.deltaN
-        M = self.m0 + n * tk
-
-        ek = self.getEccentricAnomaly(M)
-        F = -2 * sqrt(constants.MU_EARTH) / (constants.SPEED_OF_LIGHT * constants.SPEED_OF_LIGHT)
-        delta_tr = F * self.ecc * sqrt(self.a) * sin(ek)
-        delta_t = self.af0 + self.af1 * tk + delta_tr
-        t = tow - delta_t
-        tk = t - self.toe
-        M = self.m0 + n * tk
-
-        ek = self.getEccentricAnomaly(M)
-
-        v = atan2(sqrt(1 - self.ecc * self.ecc) * sin(ek), cos(ek) - self.ecc)
-        phi = v + self.omega
-        u = phi + self.cuc * cos(2 * phi) + self.cus * sin(2 * phi)
-        r = self.a * (1 - self.ecc * cos(ek)) + self.crc * cos(2 * phi) + self.crs * sin(2 * phi)
-        i = self.i0 + self.iDot * tk
-        Omega = self.Omega0 + (self.OmegaDot - constants.ROT_RATE_EARTH) * tk - constants.ROT_RATE_EARTH * self.toe
-        x1 = cos(u) * r
-        y1 = sin(u) * r
-
-        x = x1 * cos(Omega) - y1 * cos(i) * sin(Omega)
-        y = x1 * sin(Omega) + y1 * cos(i) * cos(Omega)
-        z = y1 * sin(i)
-        return x, y, z
-
     def getEccentricAnomaly(self, mean_anomaly):
         """
         Calculate the eccentric anomaly for a given mean anomaly
