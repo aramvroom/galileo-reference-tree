@@ -1,9 +1,14 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import io
 import unittest
 from unittest.mock import patch
 
-from gnss_monitor.satephemeris import SatEphemeris
-from gnss_monitor.twolineelements import TwoLineElements
+from galileo_reference_tree.satephemeris import SatEphemeris
+from galileo_reference_tree.twolineelements import TwoLineElements
 
 
 class TestTwoLineElements(unittest.TestCase):
@@ -26,10 +31,10 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         # Ephemeris mock object
         self.mock_ephemeris = [SatEphemeris() for _ in range(2)]  # Placeholder for ephemeris list with empty dicts
 
-    @patch('gnss_monitor.twolineelements.requests.get')
-    @patch('gnss_monitor.twolineelements.load.open')
-    @patch('gnss_monitor.twolineelements.load.exists')
-    @patch('gnss_monitor.twolineelements.load.download')
+    @patch('galileo_reference_tree.twolineelements.requests.get')
+    @patch('galileo_reference_tree.twolineelements.load.open')
+    @patch('galileo_reference_tree.twolineelements.load.exists')
+    @patch('galileo_reference_tree.twolineelements.load.download')
     def test_initialization(self, mock_download, mock_exists, mock_open_file, mock_requests_get):
         """Test that TLE data is fetched and parsed correctly during initialization."""
         # Mock the file exists and its content
@@ -51,7 +56,7 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         self.assertEqual(tle.gsat_to_svid_map['GSAT0101'], 1)  # SV ID mapping
         self.assertEqual(tle.gsat_to_svid_map['GSAT0102'], 2)
 
-    @patch('gnss_monitor.twolineelements.requests.get')
+    @patch('galileo_reference_tree.twolineelements.requests.get')
     def test_get_gsat_to_svid_map(self, mock_requests_get):
         """Test the Galileo satellite to SV ID mapping retrieval."""
         # Mock successful HTTP response with simplified HTML
@@ -66,8 +71,8 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         self.assertEqual(tle.gsat_to_svid_map['GSAT0101'], 1)
         self.assertEqual(tle.gsat_to_svid_map['GSAT0102'], 2)
 
-    @patch('gnss_monitor.twolineelements.requests.get')
-    @patch('gnss_monitor.twolineelements.load.open')
+    @patch('galileo_reference_tree.twolineelements.requests.get')
+    @patch('galileo_reference_tree.twolineelements.load.open')
     def test_set_tle(self, mock_open_file, mock_requests_get):
         """Test the set_tle method, ensuring TLEs are assigned correctly."""
         # Mock file content with TLE CSV
@@ -86,8 +91,8 @@ GSAT0102 (GALILEO-FM2),2011-060B,2024-12-17T01:46:49.519200,1.70475232,.0004632,
         self.assertEqual(self.mock_ephemeris[0].tle.name, 'GSAT0101 (GALILEO-PFM)')
         self.assertEqual(self.mock_ephemeris[1].tle.name, 'GSAT0102 (GALILEO-FM2)')
 
-    @patch('gnss_monitor.twolineelements.requests.get')
-    @patch('gnss_monitor.twolineelements.load.open')
+    @patch('galileo_reference_tree.twolineelements.requests.get')
+    @patch('galileo_reference_tree.twolineelements.load.open')
     def test_set_tle_with_unknown_satellite(self, mock_open_file, mock_requests_get):
         """Test set_tle method when a satellite is not in the SV ID map."""
         # Mock file content with TLE CSV

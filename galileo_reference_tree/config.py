@@ -1,5 +1,17 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 from dataclasses import dataclass
 from typing import List
+
+
+# General settings
+@dataclass
+class General:
+    simulation_speed: int = 1  # Simulation speed (1 = realtime)
+    plotting: bool = True  # Plot LEDs and skyplot
 
 
 # Location to compute the visibilities at
@@ -14,7 +26,7 @@ class Location:
 @dataclass
 class Ntrip:
     software_version: float = 0.3  # Version of this software to identify with
-    software_name: str = 'gnss_monitor'  # Name of this software to identify with
+    software_name: str = 'galileo_reference_tree'  # Name of this software to identify with
     address: str = '127.0.0.1'  # URL of the caster
     port: int = 2101  # Port of the caster
     mountpoint: str = 'SOURCETABLE'  # Mount point to use
@@ -68,8 +80,7 @@ class LEDs:
 # Class containing the complete configuration
 @dataclass
 class Config:
+    general: General = General  # General settings
     location: Location = Location  # The location to compute the visibilities for
     ntrip: Ntrip = Ntrip  # Settings related to the NTRIP Client and Caster
     leds: LEDs = LEDs  # Settings related to the LED strip
-    verbose: bool = False  # Run verbosely
-    simulation_speed: int = 1  # Simulation speed (1 = realtime)

@@ -8,20 +8,20 @@ from math import floor
 from astropy.time import Time
 from dataclass_binder import Binder
 
-from gnss_monitor import constants
-from gnss_monitor.config import Config, Location
-from gnss_monitor.ledcontroller import LedController
-from gnss_monitor.ntripclient import NtripClient
-from gnss_monitor.plotleds import LedPlot
-from gnss_monitor.satephemeris import SatEphemeris
-from gnss_monitor.skyplot import SkyPlot
-from gnss_monitor.transform import ecef2aer
-from gnss_monitor.twolineelements import TwoLineElements
+from galileo_reference_tree import constants
+from galileo_reference_tree.config import Config, Location
+from galileo_reference_tree.ledcontroller import LedController
+from galileo_reference_tree.ntripclient import NtripClient
+from galileo_reference_tree.plotleds import LedPlot
+from galileo_reference_tree.satephemeris import SatEphemeris
+from galileo_reference_tree.skyplot import SkyPlot
+from galileo_reference_tree.transform import ecef2aer
+from galileo_reference_tree.twolineelements import TwoLineElements
 
 TIME_START = datetime.datetime.now(datetime.UTC)
 
 
-def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1, verbose=False):
+def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1):
     """
     Continuously propagates ephemeris data and computes the satellites' azimuth and
     elevation as observed from a specific location. The propagation is performed in a loop
@@ -37,8 +37,6 @@ def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1,
             altitude in degrees and meters respectively.
         simulation_speed (int, optional): optional speed-up factor for the simulation's
             time progression. Default is 1.
-        verbose (bool, optional): If True, additional information about each satellite's
-            azimuth, elevation, and range is printed to the console. Default is False.
     """
     # Start continuous loop
     while True:
@@ -55,8 +53,6 @@ def propagate_all(all_ephem, all_azelev, location: Location, simulation_speed=1,
                 az, elev, r = ecef2aer(x, y, z, location.latitude_deg, location.longitude_deg,
                                        location.altitude_m)
                 all_azelev[idx] = [az, elev]
-                if verbose:
-                    print('Sat', eph.prn, 'az', az, 'elev', elev, 'r', r)
         time.sleep(constants.PROPAGATION_INTERVAL)
 
 
@@ -114,8 +110,8 @@ if __name__ == '__main__':
 
         # Create propagation loop
         running_threads.append(threading.Thread(target=propagate_all,
-                                                args=[ephemeris, azelev, config.location, config.simulation_speed,
-                                                      config.verbose]))
+                                                args=[ephemeris, azelev, config.location,
+                                                      config.general.simulation_speed]))
 
         # Create LED update loop for satellites
         ledController = LedController(constants.MAX_SATS, ephemeris, azelev, config.leds)
@@ -134,13 +130,14 @@ if __name__ == '__main__':
             thread.daemon = True
             thread.start()
 
-        # Start plotting loop. This has to be done in the main thread
-        skyplot = SkyPlot(constants.MAX_SATS)
-        ledPlot = LedPlot(10, ledController.ledstrip)
-        while True:
-            skyplot.update_plot(ephemeris, azelev)
-            ledPlot.update_plot()
-            time.sleep(constants.PLOTTING_INTERVAL)
+        if config.general.plotting:
+            # Start plotting loop. This has to be done in the main thread
+            skyplot = SkyPlot(constants.MAX_SATS)
+            ledPlot = LedPlot(10, ledController.ledstrip)
+            while True:
+                skyplot.update_plot(ephemeris, azelev)
+                ledPlot.update_plot()
+                time.sleep(constants.PLOTTING_INTERVAL)
 
     finally:
-        [thread.join() for thread in running_threads]
+        [thread.join() for thread in running_threads if thread.is_alive()]

@@ -1,7 +1,12 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import unittest
 from unittest.mock import MagicMock, patch
 
-from gnss_monitor.plotleds import *
+from galileo_reference_tree.plotleds import *
 
 
 class TestLedPlot(unittest.TestCase):

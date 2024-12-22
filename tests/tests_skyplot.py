@@ -1,7 +1,12 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import unittest
 from unittest.mock import patch, MagicMock
 
-from gnss_monitor.skyplot import *
+from galileo_reference_tree.skyplot import *
 
 
 class TestSkyPlot(unittest.TestCase):

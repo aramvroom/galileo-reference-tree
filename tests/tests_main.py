@@ -1,9 +1,14 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import datetime
 import unittest
 from unittest.mock import patch, MagicMock
 
-from gnss_monitor import constants
-from gnss_monitor.config import Location
+from galileo_reference_tree import constants
+from galileo_reference_tree.config import Location
 from main import getCurrentToW, propagate_all
 
 

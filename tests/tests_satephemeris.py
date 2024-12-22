@@ -1,3 +1,8 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import io
 import unittest
 from math import pi
@@ -5,9 +10,9 @@ from unittest.mock import patch
 
 from pyrtcm import RTCMMessage
 
-from gnss_monitor import constants
-from gnss_monitor.satephemeris import SatEphemeris, correct_wn_for_rollover
-from gnss_monitor.twolineelements import TwoLineElements
+from galileo_reference_tree import constants
+from galileo_reference_tree.satephemeris import SatEphemeris, correct_wn_for_rollover
+from galileo_reference_tree.twolineelements import TwoLineElements
 
 
 class TestSatEphemeris(unittest.TestCase):
@@ -91,8 +96,8 @@ class TestSatEphemeris(unittest.TestCase):
         self.assertAlmostEqual(y, expected_y, delta=2)
         self.assertAlmostEqual(z, expected_z, delta=2)
 
-    @patch('gnss_monitor.twolineelements.requests.get')
-    @patch('gnss_monitor.twolineelements.load.open')
+    @patch('galileo_reference_tree.twolineelements.requests.get')
+    @patch('galileo_reference_tree.twolineelements.load.open')
     def test_propagate_tle(self, mock_open_file, mock_requests_get):
         # Prepare
         # Mocking TLE object is complex. As the TLE loader is already covered by another UT, it can be used here instead

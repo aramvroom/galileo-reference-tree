@@ -1,12 +1,17 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import datetime
-from math import pi, sqrt, sin, atan2, cos, floor, ceil, atan
+from math import pi, sqrt, sin, cos, floor, ceil, atan
 
 from astropy.coordinates import GCRS, CartesianRepresentation, ITRS
 from astropy.time import Time
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
 
-from gnss_monitor import constants
+from galileo_reference_tree import constants
 
 
 def correct_wn_for_rollover(wn):
@@ -50,11 +55,11 @@ class SatEphemeris(object):
 
     Attributes:
         gst (int): GPS system time in seconds.
-        prn (int): Pseudo-random noise (PRN) identifier for the satellite.
+        prn (int): Satellite identifier
         signalHealth (int): Signal health status; defaults to -1 for unknown.
         dataValidity (int): Data validity flag.
         wn (int): GPS week number.
-        iodNav (int): Issue of Data for Navigation.
+        iodNav (int): Issue of Data
         iDot (float): Rate of change of inclination in radians/second.
         toc (int): Time of clock, expressed in seconds.
         af2 (float): Clock drift rate.
@@ -227,8 +232,6 @@ class SatEphemeris(object):
         system at a specified time of week (TOW) based on its ephemeris parameters. Source:
         Subirana, J., Hernandez-Pajares, M., Zornoza, J., European Space Agency, & Fletcher, K. (2013).
         GNSS Data Processing Volume 1. ESA Communications.
-
-
 
         Parameters:
             tow (float): Time of week (TOW) in seconds for which the satellite's position is to be computed.

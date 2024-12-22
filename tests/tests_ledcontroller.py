@@ -1,10 +1,14 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import unittest
 from unittest.mock import patch
 
-from gnss_monitor import constants
-from gnss_monitor.config import LEDs
-from gnss_monitor.ledcontroller import *
-from gnss_monitor.satephemeris import SatEphemeris
+from galileo_reference_tree import constants
+from galileo_reference_tree.ledcontroller import *
+from galileo_reference_tree.satephemeris import SatEphemeris
 
 
 def mocked_count():

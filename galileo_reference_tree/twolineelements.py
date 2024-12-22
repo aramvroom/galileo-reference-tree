@@ -1,3 +1,8 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import csv
 import warnings
 
@@ -6,7 +11,7 @@ from bs4 import BeautifulSoup
 from skyfield.api import load
 from skyfield.sgp4lib import EarthSatellite
 
-from gnss_monitor import constants
+from galileo_reference_tree import constants
 
 
 class TwoLineElements(object):

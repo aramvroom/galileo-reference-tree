@@ -1,6 +1,11 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 from math import sqrt, sin, cos, hypot, atan2, pi
 
-from gnss_monitor import constants
+from galileo_reference_tree import constants
 
 
 def llh2ecef(lat, lon, h):
@@ -12,7 +17,7 @@ def llh2ecef(lat, lon, h):
     the WGS84 ellipsoid parameters into the Cartesian ECEF coordinates. It
     takes into account the flattening of the Earth by using the ellipsoidal
     model defined by constants such as the semi-major axis and first
-    eccentricity squared. Source: Subirana, J., Hernandez-Pajares, M., Zornoza, J.,
+    eccentricity squared. Reference: Subirana, J., Hernandez-Pajares, M., Zornoza, J.,
     European Space Agency, & Fletcher, K. (2013). GNSS Data Processing Volume 1.
     ESA Communications.
 
@@ -38,7 +43,9 @@ def ecef2aer(x, y, z, lat0, lon0, alt0):
     """
     Converts Earth-Centered Earth-Fixed (ECEF) coordinates to Azimuth, Elevation,
     and Range (AER) coordinates with respect to a fixed observation point defined
-    by latitude, longitude, and altitude.
+    by latitude, longitude, and altitude. Reference: Subirana, J., Hernandez-Pajares, M.,
+    Zornoza, J., European Space Agency, & Fletcher, K. (2013). GNSS Data Processing Volume 1.
+    ESA Communications.
 
     Parameters:
         x (float): X-coordinate of the target in ECEF (meters).
@@ -65,6 +72,8 @@ def ecef2aer(x, y, z, lat0, lon0, alt0):
 def ecef2enu(dx, dy, dz, lat0, lon0):
     """
     Convert a position difference in ECEF coordinates to ENU (East-North-Up) local coordinates.
+    Reference: Subirana, J., Hernandez-Pajares, M., Zornoza, J., European Space Agency, & Fletcher, K.
+    (2013). GNSS Data Processing Volume 1. ESA Communications.
 
     Parameters:
         dx (float): The delta-x component of the vector in ECEF coordinates in meters.

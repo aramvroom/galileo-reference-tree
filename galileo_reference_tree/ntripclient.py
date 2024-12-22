@@ -1,11 +1,15 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import base64
 import socket
-import sys
 
 import pyrtcm
 
-from gnss_monitor import constants
-from gnss_monitor.config import Ntrip
+from galileo_reference_tree import constants
+from galileo_reference_tree.config import Ntrip
 
 
 def check_connection_response(line):

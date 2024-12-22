@@ -1,7 +1,12 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import unittest
 from unittest.mock import patch, MagicMock
 
-from gnss_monitor.ntripclient import *
+from galileo_reference_tree.ntripclient import *
 
 
 class TestCheckConnectionResponse(unittest.TestCase):
@@ -53,7 +58,7 @@ class TestNtripClient(unittest.TestCase):
         self.ephem = [{} for _ in range(36)]
 
     @patch("socket.create_connection")
-    @patch("gnss_monitor.ntripclient.check_connection_response")
+    @patch("galileo_reference_tree.ntripclient.check_connection_response")
     def test_connect_to_server(self, mock_check_response, mock_create_connection):
         # Prepare
         mock_socket = MagicMock()
@@ -68,7 +73,7 @@ class TestNtripClient(unittest.TestCase):
         mock_socket.sendall.assert_called()
         mock_check_response.assert_called_with("ICY 200 OK")
 
-    @patch("gnss_monitor.ntripclient.NtripClient.connect_to_server")
+    @patch("galileo_reference_tree.ntripclient.NtripClient.connect_to_server")
     def test_get_mount_point_for_request(self, mock_connect_to_server):
         # Prepare
         mock_socket = MagicMock()
@@ -87,7 +92,7 @@ class TestNtripClient(unittest.TestCase):
         self.assertIn("Ntrip-Version: Ntrip/2.0", request)
 
     @patch("pyrtcm.RTCMReader")
-    @patch("gnss_monitor.ntripclient.NtripClient.connect_to_server")
+    @patch("galileo_reference_tree.ntripclient.NtripClient.connect_to_server")
     def test_get_ephemeris_loop(self, mock_connect_to_server, mock_rtcm_reader):
         # Prepare
         # Mock an ephemeris entry with a 'gst' property and a 'map_to_ephemeris' method

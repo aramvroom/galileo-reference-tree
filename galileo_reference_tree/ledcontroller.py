@@ -1,10 +1,15 @@
+#  Copyright (c) 2024, Aram Vroom.
+#
+#  This software is licensed under the MIT License.
+#  For details, see the LICENSE file in the project root.
+
 import itertools
 import time
 from itertools import cycle
 
 from rpi_ws281x import PixelStrip, Color
 
-from gnss_monitor.config import LEDs
+from galileo_reference_tree.config import LEDs
 
 
 def strip_type_to_int(strip_type: str):
