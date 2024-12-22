@@ -30,7 +30,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Test and Code Coverage
       run: |
-        coverage run --source=./ --omit=*/test/* -m unittest discover -s test/
+        coverage run --source=./ --omit=*/tests/* -m unittest discover -s tests/
         coverage xml
     - name: Push to Codacy
       env: 
