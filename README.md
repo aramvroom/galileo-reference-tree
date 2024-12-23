@@ -185,9 +185,8 @@ The configuration is handled through the `config.toml` file. The settings are el
 
 ### NTRIP Settings
 
-- Request header options:
-    - `software-version` - Version of this software to identify with
-    - `software-name` - Name of this software to identify with
+- `software-version` - Version of this software to identify with
+- `software-name` - Name of this software to identify with
 - `address` - URL of the NTRIP caster
 - `port` - Port of the NTRIP caster
 - `mountpount` - The caster mount point to use (you can use [this tool](http://monitor.use-snip.com) to find the closest one which provides RTCM 1046 messages)
