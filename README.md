@@ -1,6 +1,6 @@
 # Galileo Reference Tree
 
-![](docs/galileo-reference-tree-banner.jpg)
+![](images/galileo-reference-tree-banner.jpg)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/0c4421a15b7c4559b53c6ef5839fa138)](https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c4421a15b7c4559b53c6ef5839fa138)](https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
@@ -14,10 +14,25 @@ This repository contains a hobby project to show the live Galileo constellation 
 Christmas tree. The color and brightness of the LEDs correspond to the health status and elevation respectively. It is
 inspired by a combination of Matt Parker's [Programmable Christmas Tree](https://www.youtube.com/watch?v=TvlpIojusBE)
 and Bert Hubert's [Galmon](https://galmon.eu/).
-The scripts automatically retrieve of the latest orbits from Two Line Element (TLE) and ephemeris data, compute the
+The scripts automatically retrieve the latest orbits from Two Line Element (TLE) and ephemeris data, compute the
 elevations at a preconfigured user location and control the LEDs through the GPIO pins accordingly.
 
 Tested with Python 3.11 and 3.13 on Raspberry Pi OS (H/W: Pi 4B) and Windows (for dev. purposes)
+
+## Table of Contents
+  * [Features](#features)
+  * [Installation](#installation)
+    * [Raspberry Pi with LED Strip](#raspberry-pi-with-led-strip)
+      * [Software Installation Steps](#software-installation-steps)
+    * [Development Environment without LED Strip](#development-environment-without-led-strip)
+  * [Hardware Setup](#hardware-setup)
+  * [Configuration Options](#configuration-options)
+    * [General Settings](#general-settings)
+    * [NTRIP Settings](#ntrip-settings)
+    * [LED Settings](#led-settings)
+  * [3D Models](#3d-models)
+  * [License](#license)
+<!-- TOC -->
 
 ## Features
 
@@ -38,7 +53,7 @@ Tested with Python 3.11 and 3.13 on Raspberry Pi OS (H/W: Pi 4B) and Windows (fo
 * Currently programmed for Galileo, but theoretically usable for any constellation
 * Supports development on Windows environments through the `rpi_ws281x_mock` library
 
-![plots.jpg](docs/plots.jpg)
+![plots.jpg](images/plots.jpg)
 
 ## Installation
 
@@ -156,7 +171,7 @@ Lastly, the LED strip is connected as follows:
 The usage of 20 AWG wire for the power supply to LED strip connection is highly recommended to minimize the chance of
 overheating.
 
-![schematic.jpg](docs/schematic.jpg)
+![schematic.jpg](images/schematic.jpg)
 
 ## Configuration Options
 
@@ -231,11 +246,14 @@ username-password = "example@email.com:none"    # Note: must be a valid email ad
 - `orbit-plane-b` - LED indicates corresponding to orbital plane B
 - `orbit-plane-c` - LED indicates corresponding to orbital plane C
 - `map-prns` - List of Satellite IDs
-- `map-leds` - List of LED indicates corresponding to the satellite IDs
+- `map-leds` - List of LED indices corresponding to the satellite IDs
 
 
+## 3D Models
+The `3d_models` directory contains 3 models: the satellite body, the satellite body with a hole for the LED and the solar panel. They are .f3d files which can be imported into Fusion360. 
 
-
+In terms of printing, standard 0.20mm FDM printing gave good results. Simple superglue worked well for assembly.
+![3D_Models.jpg](images/3D_Models.jpg)
 
 ## License
 
