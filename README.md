@@ -12,7 +12,7 @@
 
 This repository contains a hobby project to show the live Galileo constellation visibility and status as LEDs in a
 Christmas tree. The color and brightness of the LEDs correspond to the health status and elevation respectively. It is
-inspired by a combination of Matt Parker's [Programmable Christmas Tree](https://www.youtube.com/watch?v=TvlpIojusBE)
+inspired by a combination of the Galileo Reference Centre, Matt Parker's [Programmable Christmas Tree](https://www.youtube.com/watch?v=TvlpIojusBE)
 and Bert Hubert's [Galmon](https://galmon.eu/).
 The scripts automatically retrieve the latest orbits from Two Line Element (TLE) and ephemeris data, compute the
 elevations at a preconfigured user location and control the LEDs through the GPIO pins accordingly.
@@ -46,7 +46,7 @@ Tested with Python 3.11 and 3.13 on Raspberry Pi OS (H/W: Pi 4B) and Windows (fo
 * Satellite elevation indication through configurable LED brightness levels,
 * Satellite health status indication through configurable colors,
 * Configurable simulation speed for faster than real-time simulation,
-* Customizable to different setups (user location, number of LEDs, used GPIO pins, etc.) through a TOML config file,
+* Customizable to different setups (user location, number of LEDs, used GPIO pins, etc.),
 * Compatible with many different LED strips, including WS2811, WS2812 and SK6812 strips (note: only WS2811 is fully
   tested),
 * Plots a live Skyplot and a graphical representation of the LEDs using `matplotlib`,
@@ -72,10 +72,10 @@ Note that any values between square brackets [example] should be replaced by you
     - Raspberry Pi Device: [your Raspberry Pi version]
     - Operating System: Raspberry Pi OS (64-bit)
     - Storage: [your storage device]
-    - Preconfigure the username, password and wireless lan
+    - Preconfigure the username, password and wireless LAN
     - Go to the Services tab and enable SSH
 3. Slot the SD card into the Pi, power it up and connect using ssh `ssh [username]@[ip_address]`
-    - _Note: can check the IP through your router for example_
+    - _Note: you can check the IP through your router for example_
 4. Optional: set up VNC:
     - Run `sudo raspi-config`
     - Go to Interface options, and enable VNC
