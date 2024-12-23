@@ -250,7 +250,7 @@ username-password = "example@email.com:none"    # Note: must be a valid email ad
 
 
 ## 3D Models
-The `3d_models` directory contains 3 models: the satellite body, the satellite body with a hole for the LED and the solar panel. They are .f3d files which can be imported into Fusion360. 
+The [3d_models](https://github.com/aramvroom/galileo-reference-tree/tree/main/3d_models) directory contains 3 models: the satellite body, the satellite body with a hole for the LED and the solar panel. They are .f3d files which can be imported into Fusion360. 
 
 In terms of printing, standard 0.20mm FDM printing gave good results. Simple superglue worked well for assembly.
 ![3D_Models.jpg](images/3D_Models.jpg)
