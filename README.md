@@ -188,13 +188,12 @@ The configuration is handled through the `config.toml` file. The settings are el
 - Request header options:
     - `software-version` - Version of this software to identify with
     - `software-name` - Name of this software to identify with
-    - `address` - URL of the NTRIP caster
-    - `port` - Port of the NTRIP caster
-    - `mountpount` - The caster mount point to use (you can use [this tool](http://monitor.use-snip.com) to find the
-      closest one which provides RTCM 1046 messages)
-    - `ntrip-v2` - Boolean indicating if NTRIP V2 should be used (otherwise uses V3)
-    - `include-host-header` - Boolean indicating if the host header should be included (required by some casters)
-    - `username-password` - The username and password to connect with (required by some casters)
+- `address` - URL of the NTRIP caster
+- `port` - Port of the NTRIP caster
+- `mountpount` - The caster mount point to use (you can use [this tool](http://monitor.use-snip.com) to find the closest one which provides RTCM 1046 messages)
+- `ntrip-v2` - Boolean indicating if NTRIP V2 should be used (otherwise uses V3)
+- `include-host-header` - Boolean indicating if the host header should be included (required by some casters)
+- `username-password` - The username and password to connect with (required by some casters)
 
 An example configuration for connecting to the
 Dutch [Kadaster NTRIP Caster](http://monitor.use-snip.com/?hostUrl=ntrip.kadaster.nl&port=2101) can be found below:
