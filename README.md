@@ -235,7 +235,7 @@ username-password = "example@email.com:none"    # Note: must be a valid email ad
 **Satellite LED Settings**
 - `color-healthy` - [R,G,B] color to use for healthy satellites
 - `color-unhealthy`- [R,G,B] color to use for unhealthy satellites
-- `color-unknown` - [R,G,B] color to use for unhealthy satellites
+- `color-unknown` - [R,G,B] color to use for satellites with unknown health status
 - `color-plane` - [R,G,B] color to use to display the orbital plane
 - `brightness-early-late-plane` - Brightness for the early and late LEDs in the orbital plane animation
 - `min-elev` - Minimum elevation to display

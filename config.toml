@@ -40,7 +40,7 @@ plane-interval = 4.0        # Interval for the plane LEDs
 [leds.satellites]
 color-healthy = [0, 255, 0]                                 # [R,G,B] color to use for healthy satellites
 color-unhealthy = [255, 0, 0]                               # [R,G,B] color to use for unhealthy satellites
-color-unknown = [255, 165, 0]                               # [R,G,B] color to use for unhealthy satellites
+color-unknown = [255, 165, 0]                               # [R,G,B] color to use for satellites with unknown health status
 color-plane = [255, 255, 255]                               # [R,G,B] color to use to display the orbital plane
 brightness-early-late-plane = 0.5                           # Brightness for the early and late LEDs in the orbital plane animation
 min-elev = 0.0                                              # Minimum elevation
