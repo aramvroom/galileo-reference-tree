@@ -13,12 +13,12 @@ altitude-m = 0.0
 [ntrip]
 software-version = 0.1                  # Version of this software to identify with
 software-name = "galileo-reference-tree"          # Name of this software to identify with
-address = "rtk2go.com"           # URL of the caster
+address = "ntrip.kadaster.nl"           # URL of the caster
 port = 2101                             # Port of the caster
-mountpoint = "AgPartner_1"               # Mount point to use
+mountpoint = "BCEP00KAD0"               # Mount point to use
 ntrip-v2 = false                        # Make a NTRIP V2 Connection
 include-host-header = false             # Include host header, should be on for IBSS
-username-password = "anonymous:none"    # The username and password to connect with
+username-password = "anonymous:pass"    # The username and password to connect with
 
 # Settings related to the LED strip
 [leds]
