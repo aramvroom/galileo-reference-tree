@@ -10,7 +10,7 @@
 
 ---
 
-This repository contains a hobby project to show the live Galileo constellation visibility and status as LEDs in a
+This repository contains a hobby project to show the live Galileo constellation visibility and status as LEDs on a
 Christmas tree. The color and brightness of the LEDs correspond to the health status and elevation respectively. It is
 inspired by a combination of the Galileo Reference Centre, Matt Parker's [Programmable Christmas Tree](https://www.youtube.com/watch?v=TvlpIojusBE)
 and Bert Hubert's [Galmon](https://galmon.eu/).
@@ -41,15 +41,14 @@ Tested with Python 3.11 and 3.13 on Raspberry Pi OS (H/W: Pi 4B) and Windows (fo
     * Compatible with many providers, including the
       Dutch [Kadaster NTRIP Caster](http://monitor.use-snip.com/?hostUrl=ntrip.kadaster.nl&port=2101)
       and [RTK2GO](http://monitor.use-snip.com/?hostUrl=rtk2go.com&port=2101),
-* Capable of displaying satellites not transmitting ephemeris through autonomous retrieval of CelesTrak Two Line
-  Element (TLE) data,
+* Capable of displaying satellites not transmitting ephemeris through autonomous retrieval of CelesTrak TLE data,
 * Satellite elevation indication through configurable LED brightness levels,
 * Satellite health status indication through configurable colors,
 * Configurable simulation speed for faster than real-time simulation,
 * Customizable to different setups (user location, number of LEDs, used GPIO pins, etc.),
 * Compatible with many different LED strips, including WS2811, WS2812 and SK6812 strips (note: only WS2811 is fully
   tested),
-* Plots a live Skyplot and a graphical representation of the LEDs using `matplotlib`,
+* Plots a live Skyplot and graphical representation of the LEDs using `matplotlib`,
 * Currently programmed for Galileo, but theoretically usable for any constellation
 * Supports development on Windows environments through the `rpi_ws281x_mock` library
 
