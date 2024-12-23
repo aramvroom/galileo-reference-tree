@@ -28,6 +28,7 @@ Tested with Python 3.11 and 3.13 on Raspberry Pi OS (H/W: Pi 4B) and Windows (fo
 * Currently programmed for Galileo, but theoretically usable for any constellation
 * Supports development on Windows environments through the `rpi_ws281x_mock` library
 
+![plots.jpg](docs/plots.jpg)
 ## Installation
 ### Raspberry Pi with LED Strip
 These installation steps assume you have a Raspberry Pi (4B) with Raspberry Pi OS, git and python installed, which is reachable through SSH or VNC. If this is not the case, check the steps below. 
@@ -67,6 +68,7 @@ Your Pi is now ready to continue to the following steps.
     ```
 1. Check that the unit tests pass: `sudo venv/bin/python -m unittest`
 1. Customize `config.toml` to your setup (see [Configuration Options](#configuration-options) for more detail)
+   - _Note: it is recommend to turn off plotting when running the software as a service_ 
 1. Create a service which starts on boot (optional, but highly recommended)
    - Run `sudo systemctl edit --force --full grt.service`
    - Paste the following (replacing values between square brackets): 
@@ -101,15 +103,70 @@ Your Pi is now ready to continue to the following steps.
 
 ## Hardware Setup
 The hardware uses the following parts:
-- 3.3V - 5V Logic Level Converter
-- 470 Ohm Resistor
-- Raspberry Pi 
+- Logic Level Converter ([example](https://www.tinytronics.nl/en/communication-and-signals/level-converters/spi-i2c-uart-bi-directional-logic-level-converter-4-channel)),
+- 470 Ohm Resistor,
+- 12V 6A Power Supply (enough for 200 LEDs),
+- Raspberry Pi (tested with 4B),
+- 12V WS2811 LED Strip ([example](https://www.amazon.com/ALITOVE-Addressable-Programmable-Waterproof-ALT-Connector/dp/B0923SDR5T?th=1)),
+- Some 22 AWG and 20 AWG wires,
+- Optionally, a 5-way wire connector ([example](https://www.tinytronics.nl/en/cables-and-connectors/connectors/push-in-wire-connectors/wago-push-in-wire-connector-5-way)). Can be soldered instead.
+
+As can be seen in the figure below, the following GPIO pin connections are used:
+- Pin 1 (3V3) to LV on the logic level shifter in order to indicate the low voltage,
+- Pin 4 (5V) to HV on the logic level shifter to indicate the high voltage,
+- Pin 12 (GPIO 18, PWM0) to the LV0 channel on the logic level shifter to transmit the data coming from the Pi, 
+- Pin 39 (GND) to the 5-way connector to ground the Pi.
+
+From the logic level converter, the following connections are then made:
+- The GND on the HV side of the converter is also connected to the 5-way connector for grounding,
+- The HV0 channel is connected to a 470 Ohm resistor.
+
+Lastly, the LED strip is connected as follows:
+- The +12V side is connected to the 12V 6A power supply,
+  - _Note: check the LED connections to ensure which cable is positive or negative,_ 
+- The GND is connected to the 5-way connector, which is in turn connected to the power supply,
+- The Data input is connected to the 470 Ohm resistor coming from the converter.
+
+The usage of 20 AWG wire for the power supply to LED strip connection is highly recommended to minimize the chance of overheating.
 
 ![schematic.jpg](docs/schematic.jpg)
 
 ## Configuration Options
-
-## Test Execution
+The configuration is handled through the `config.toml` file. The settings are elaborated upon in more detail below.
+### General Settings
+- `simulation-speed` - Float which allows for faster than real-time simulation. Defaults to 1 (real-time)
+- `plotting` - Boolean indicating if the skyplot and LED visualization should be plotted
+- `location` - The latitude, longitude and altitude in degrees and meters to compute the visibilities / elevations for
+### NTRIP Settings
+- Request header options:
+  - `software-version` - Version of this software to identify with
+  - `software-name` - Name of this software to identify with
+  - `address` - URL of the NTRIP caster
+  - `port` - Port of the NTRIP caster
+  - `mountpount` - The caster mount point to use (you can use [this tool](http://monitor.use-snip.com) to find the closest one which provides RTCM 1046 messages)
+  - `ntrip-v2` - Boolean indicating if NTRIP V2 should be used (otherwise uses V3)
+  - `include-host-header` - Boolean indicating if the host header should be included (required by some casters)
+  - `username-password` - The username and password to connect with (required by some casters)
+ 
+An example configuration for connecting to the Dutch [Kadaster NTRIP Caster](http://monitor.use-snip.com/?hostUrl=ntrip.kadaster.nl&port=2101) can be found below:
+```
+address = "ntrip.kadaster.nl"           # URL of the caster
+port = 2101                             # Port of the caster
+mountpoint = "BCEP00KAD0"               # Mount point to use
+ntrip-v2 = false                        # Make a NTRIP V2 Connection
+include-host-header = false             # Include host header, should be on for IBSS
+username-password = "anonymous:pass"    # The username and password to connect with
+```
+An example configuration for [RTK2GO](http://monitor.use-snip.com/?hostUrl=rtk2go.com&port=2101) is also provided below:
+```
+address = "ntrip.kadaster.nl"           # URL of the caster
+port = 2101                             # Port of the caster
+mountpoint = "BCEP00KAD0"               # Mount point to use
+ntrip-v2 = false                        # Make a NTRIP V2 Connection
+include-host-header = false             # Include host header, should be on for IBSS
+username-password = "anonymous:pass"    # The username and password to connect with
+```
+### LED Settings
 
 ## License
 

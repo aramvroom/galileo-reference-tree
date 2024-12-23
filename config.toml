@@ -1,22 +1,21 @@
 # General settings
 [general]
 simulation-speed = 1    # Simulation speed (1 = realtime)
-plotting = true
+plotting = true			# Show plots	
 
 # The location to compute the visibilities for
-[location]
+[general.location]
 latitude-deg = 52.0
 longitude-deg = 4.0
 altitude-m = 0.0
 
 # Settings related to the NTRIP Client and Caster
 [ntrip]
-software-version = 0.3                  # Version of this software to identify with
-software-name = "gnss-monitor"          # Name of this software to identify with
+software-version = 0.1                  # Version of this software to identify with
+software-name = "galileo-reference-tree"          # Name of this software to identify with
 address = "ntrip.kadaster.nl"           # URL of the caster
 port = 2101                             # Port of the caster
 mountpoint = "BCEP00KAD0"               # Mount point to use
-use-ssl = false                         # Use SSL for the connection
 ntrip-v2 = false                        # Make a NTRIP V2 Connection
 include-host-header = false             # Include host header, should be on for IBSS
 username-password = "anonymous:pass"    # The username and password to connect with

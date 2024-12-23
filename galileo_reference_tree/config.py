@@ -7,19 +7,20 @@ from dataclasses import dataclass
 from typing import List
 
 
-# General settings
-@dataclass
-class General:
-    simulation_speed: int = 1  # Simulation speed (1 = realtime)
-    plotting: bool = True  # Plot LEDs and skyplot
-
-
 # Location to compute the visibilities at
 @dataclass
 class Location:
     latitude_deg: float = 0.0  # Latitude in degrees
     longitude_deg: float = 0.0  # Longitude in degrees
     altitude_m: float = 0.0  # Altitude in meters
+
+
+# General settings
+@dataclass
+class General:
+    simulation_speed: int = 1  # Simulation speed (1 = realtime)
+    plotting: bool = True  # Plot LEDs and skyplot
+    location: Location = Location  # The location to compute the visibilities for
 
 
 # Settings related to the NTRIP Client and Caster
@@ -30,7 +31,6 @@ class Ntrip:
     address: str = '127.0.0.1'  # URL of the caster
     port: int = 2101  # Port of the caster
     mountpoint: str = 'SOURCETABLE'  # Mount point to use
-    use_ssl: bool = False  # Use SSL for the connection
     ntrip_v2: bool = False  # Make a NTRIP V2 Connection
     include_host_header: bool = False  # Include host header, should be on for IBSS
     username_password: str = 'anonymous:password'  # The username and password to connect with
@@ -81,6 +81,5 @@ class LEDs:
 @dataclass
 class Config:
     general: General = General  # General settings
-    location: Location = Location  # The location to compute the visibilities for
     ntrip: Ntrip = Ntrip  # Settings related to the NTRIP Client and Caster
     leds: LEDs = LEDs  # Settings related to the LED strip

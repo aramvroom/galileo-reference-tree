@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
         # Create propagation loop
         running_threads.append(threading.Thread(target=propagate_all,
-                                                args=[ephemeris, azelev, config.location,
+                                                args=[ephemeris, azelev, config.general.location,
                                                       config.general.simulation_speed]))
 
         # Create LED update loop for satellites
