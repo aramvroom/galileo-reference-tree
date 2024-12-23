@@ -1,22 +1,11 @@
 # Galileo Reference Tree
-<img src="docs/galileo-reference-tree-banner.jpg" alt="Galileo Reference Tree">
-<div align="left">
-  <a href="https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage">
-    <img src="https://app.codacy.com/project/badge/Coverage/0c4421a15b7c4559b53c6ef5839fa138"/>
-  </a>
-  <a href="https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade">
-    <img src="https://app.codacy.com/project/badge/Grade/0c4421a15b7c4559b53c6ef5839fa138"/>
-  </a>
-  <a href="https://github.com/aramvroom/galileo-reference-tree/actions/workflows/tests.yml">
-    <img src="https://github.com/aramvroom/galileo-reference-tree/actions/workflows/tests.yml/badge.svg?branch=main"/>
-  </a>
-  <a href="https://github.com/aramvroom/galileo-reference-tree/actions/workflows/github-code-scanning/codeql">
-    <img src="https://github.com/aramvroom/galileo-reference-tree/actions/workflows/github-code-scanning/codeql/badge.svg"/>
-  </a>
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg"/>
-  </a>
-</div>
+![](docs/galileo-reference-tree-banner.jpg)
+
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/0c4421a15b7c4559b53c6ef5839fa138)](https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c4421a15b7c4559b53c6ef5839fa138)](https://app.codacy.com/gh/aramvroom/galileo-reference-tree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Tests](https://github.com/aramvroom/galileo-reference-tree/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/aramvroom/galileo-reference-tree/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/aramvroom/galileo-reference-tree/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/aramvroom/galileo-reference-tree/actions/workflows/github-code-scanning/codeql)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -24,8 +13,6 @@ This repository contains a hobby project to show the live Galileo constellation 
 The scripts automatically retrieve of the latest orbits from Two Line Element (TLE) and ephemeris data, compute the elevations at a preconfigured user location and control the LEDs through the GPIO pins accordingly.
 
 ## Features
-
----
 
 * Control of a LED strip through a Raspberry Pi's GPIO pins
 * Autonomous retrieval of the latest ephemeris from NTRIP casters,
@@ -42,19 +29,12 @@ The scripts automatically retrieve of the latest orbits from Two Line Element (T
 
 ## Installation
 
----
-
 ## Test Execution
 
----
 
 
 ## Configuration Options
 
----
-
 ## License
-
----
 
 This repository and all its contents, including the 3D models and code, are provided under a permissive MIT license. As such, this is an open source project that you are able to use however you wish, as long as you include the original license and copyright. For more information, see the [LICENSE](LICENSE) file.
