@@ -140,6 +140,7 @@ The hardware uses the following parts:
   Converter ([example](https://www.tinytronics.nl/en/communication-and-signals/level-converters/spi-i2c-uart-bi-directional-logic-level-converter-4-channel)),
 - 470 Ohm Resistor,
 - 12V 6A Power Supply (enough for 200 LEDs),
+- DC Jack Female 5.5mm to Terminal Block ([example](https://www.tinytronics.nl/en/cables-and-connectors/connectors/screw-terminals/dc-jack-female-5.5mm-to-terminal-block)),
 - Raspberry Pi (tested with 4B),
 - 12V WS2811 LED
   Strip ([example](https://www.amazon.com/ALITOVE-Addressable-Programmable-Waterproof-ALT-Connector/dp/B0923SDR5T?th=1)),
