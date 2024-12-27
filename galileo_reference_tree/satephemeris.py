@@ -16,15 +16,15 @@ from galileo_reference_tree import constants
 
 def correct_wn_for_rollover(wn):
     """
-        Corrects a week number for rollovers caused by the limited range of the GPS WN field.
+    Corrects a week number for rollovers caused by the limited range of the GPS WN field.
 
-        This function adjusts the given week number such that it is within the nearest rollover of the current week number
+    This function adjusts the given week number such that it is within the nearest rollover of the current week number
 
-        Parameters:
-            wn (int): The input week number that needs to be corrected.
+    Parameters:
+        wn (int): The input week number that needs to be corrected.
 
-        Returns:
-            int: The corrected GPS week number accounting for any rollovers.
+    Returns:
+        int: The corrected GPS week number accounting for any rollovers.
     """
     # Get current week number
     gps_time_now = Time(datetime.datetime.now(datetime.UTC), format='datetime').to_value('gps')
@@ -121,7 +121,7 @@ class SatEphemeris(object):
         data fields. It processes various orbital and clock correction parameters, as well as
         signal health and data validity.
 
-        Arguments:
+        Parameters:
             rtcm (RTCM): An RTCM object containing fields required for ephemeris mapping.
         """
         self.gst = rtcm.DF289 * constants.SEC_IN_WEEK + rtcm.DF293
