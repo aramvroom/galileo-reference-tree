@@ -2,12 +2,7 @@
 #
 #  This software is licensed under the MIT License.
 #  For details, see the LICENSE file in the project root.
-#
-#  This software is licensed under the MIT License.
-#  For details, see the LICENSE file in the project root.
-#
-#  This software is licensed under the MIT License.
-#  For details, see the LICENSE file in the project root.
+
 from dataclass_binder import Binder
 from rpi_ws281x import PixelStrip, Color
 
