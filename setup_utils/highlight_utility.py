@@ -21,6 +21,13 @@ LED_COLOR_B = [0, 255, 0]
 LED_COLOR_C = [0, 0, 255]
 LED_COLOR_RESET = [0, 0, 0]
 
+def set_led_colors(led_strip, led_indices, color_rgb_array):
+    color_object = Color(*color_rgb_array)
+    for index in led_indices:
+        led_strip.setPixelColor(index, color_object)
+    strip.show()
+
+
 if __name__ == '__main__':
     """
     This script can highlight every Nth LED and the configured orbital planes in order to aid with setting 
@@ -31,7 +38,7 @@ if __name__ == '__main__':
     """
 
     # Read the configuration file
-    config = Binder(Config).parse_toml("../config.toml")
+    config = Binder(Config).parse_toml("./config.toml")
     led_config = config.leds
 
     # Create the PixelStrip object
@@ -41,37 +48,21 @@ if __name__ == '__main__':
                        led_config.general.channel, strip_type_to_int(led_config.general.led_strip_type))
     strip.begin()
 
-    # Reset all LEDs
-    reset_color = Color(*LED_COLOR_RESET)
-    for led_idx in range(0, led_config.general.led_count):
-        strip.setPixelColor(led_idx, reset_color)
-    strip.show()
+    # Reset all LEDs at the start
+    set_led_colors(strip, range(0, led_config.general.led_count), LED_COLOR_RESET)
 
     # Highlight every Nth LED
     print("Displaying LEDs with an interval of {}.".format(LED_HIGHLIGHT_INTERVAL))
-    highlight_color = Color(*LED_COLOR_HIGHLIGHT)
-    for led_idx in range(0, led_config.general.led_count, LED_HIGHLIGHT_INTERVAL):
-        strip.setPixelColor(led_idx, highlight_color)
-    strip.show()
+    set_led_colors(strip, range(0, led_config.general.led_count, LED_HIGHLIGHT_INTERVAL), LED_COLOR_HIGHLIGHT)
     input("Press any key to continue to orbital plane highlight...")
 
     # Highlight orbital planes
     print("Highlighting orbital planes.")
     plane_color = Color(*LED_COLOR_A)
-    for led_idx in config.leds.satellites.orbit_plane_a:
-        strip.setPixelColor(led_idx, plane_color)
-
-    plane_color = Color(*LED_COLOR_B)
-    for led_idx in config.leds.satellites.orbit_plane_b:
-        strip.setPixelColor(led_idx, plane_color)
-
-    plane_color = Color(*LED_COLOR_C)
-    for led_idx in config.leds.satellites.orbit_plane_c:
-        strip.setPixelColor(led_idx, plane_color)
+    set_led_colors(strip, config.leds.satellites.orbit_plane_a, LED_COLOR_A)
+    set_led_colors(strip, config.leds.satellites.orbit_plane_b, LED_COLOR_B)
+    set_led_colors(strip, config.leds.satellites.orbit_plane_c, LED_COLOR_C)
     input("Press any key to reset all LEDs...")
 
-    # Reset all LEDs
-    reset_color = Color(*LED_COLOR_RESET)
-    for led_idx in range(0, led_config.general.led_count):
-        strip.setPixelColor(led_idx, reset_color)
-
+    # Reset all LEDs at the end
+    set_led_colors(strip, range(0, led_config.general.led_count), LED_COLOR_RESET)
