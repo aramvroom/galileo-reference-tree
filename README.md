@@ -240,9 +240,9 @@ username-password = "example@email.com:none"    # Note: must be a valid email ad
 - `min-elev-brightness` - Brightness corresponding to the minimum elevation
 - `max-elev` - Maximum elevation to display
 - `max-elev-brightness` - Brightness corresponding to the maximum elevation
-- `orbit-plane-a` - LED indicates corresponding to orbital plane A 
-- `orbit-plane-b` - LED indicates corresponding to orbital plane B
-- `orbit-plane-c` - LED indicates corresponding to orbital plane C
+- `orbit-plane-a` - LED indices corresponding to orbital plane A 
+- `orbit-plane-b` - LED indices corresponding to orbital plane B
+- `orbit-plane-c` - LED indices corresponding to orbital plane C
 - `map-prns` - List of Satellite IDs
 - `map-leds` - List of LED indices corresponding to the satellite IDs
 
