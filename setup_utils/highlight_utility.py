@@ -22,6 +22,18 @@ LED_COLOR_C = [0, 0, 255]
 LED_COLOR_RESET = [0, 0, 0]
 
 def set_led_colors(led_strip, led_indices, color_rgb_array):
+    """
+    Sets the specified LEDs on a strip to the given RGB color.
+
+    This function takes a LED strip object, a list of LED indices, and an
+    RGB color array. It then updates the specified LEDs on the strip to
+    reflect the given color values and applies the changes to the strip.
+
+    Parameters:
+        led_strip (PixelStrip): The LED strip object to control.
+        led_indices (list): A list of integers representing the indices of LEDs to be updated.
+        color_rgb_array (list): An array of three integers representing the desired color in RGB format.
+    """
     color_object = Color(*color_rgb_array)
     for index in led_indices:
         led_strip.setPixelColor(index, color_object)
