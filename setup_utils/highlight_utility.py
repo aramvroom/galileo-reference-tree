@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # Highlight every Nth LED
     print("Displaying LEDs with an interval of {}.".format(LED_HIGHLIGHT_INTERVAL))
     set_led_colors(strip, range(0, led_config.general.led_count, LED_HIGHLIGHT_INTERVAL), LED_COLOR_HIGHLIGHT)
-    input("Press any key to continue to orbital plane highlight...")
+    input("Press Enter to continue to orbital plane highlight...")
 
     # Highlight orbital planes
     print("Highlighting orbital planes.")
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     set_led_colors(strip, config.leds.satellites.orbit_plane_a, LED_COLOR_A)
     set_led_colors(strip, config.leds.satellites.orbit_plane_b, LED_COLOR_B)
     set_led_colors(strip, config.leds.satellites.orbit_plane_c, LED_COLOR_C)
-    input("Press any key to reset all LEDs...")
+    input("Press Enter to reset all LEDs...")
 
     # Reset all LEDs at the end
     set_led_colors(strip, range(0, led_config.general.led_count), LED_COLOR_RESET)
